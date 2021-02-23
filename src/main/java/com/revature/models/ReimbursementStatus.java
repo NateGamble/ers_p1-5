@@ -1,5 +1,12 @@
 package com.revature.models;
 
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "reimbursement_statuses")
 public enum ReimbursementStatus {
     // values declared within enums are constants and are comma separated
     PENDING("Pending"),

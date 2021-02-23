@@ -1,5 +1,10 @@
 package com.revature.models;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "reimbursement_types")
 public enum ReimbursementType {
     // values declared within enums are constants and are comma separated
     LODGING("Lodging"),
