@@ -4,7 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "reimbursement_types")
+@Table(name = "reimbursement_types", schema = "p1_5")
 public enum ReimbursementType {
     // values declared within enums are constants and are comma separated
     LODGING("Lodging"),

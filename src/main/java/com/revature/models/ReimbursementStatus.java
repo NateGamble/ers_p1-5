@@ -6,7 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "reimbursement_statuses")
+@Table(name = "reimbursement_statuses", schema = "p1_5")
 public enum ReimbursementStatus {
     // values declared within enums are constants and are comma separated
     PENDING("Pending"),

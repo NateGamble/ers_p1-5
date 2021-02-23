@@ -8,7 +8,7 @@ import java.util.Objects;
  * Base constructs for users, store only the integer representation of roles in the db for easier role checking
  */
 @Entity
-@Table(name = "users")
+@Table(name = "users", schema = "p1_5")
 public class User {
     @Id @GeneratedValue
     @Column(name = "id")

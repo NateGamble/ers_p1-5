@@ -4,7 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "user_roles")
+@Table(name = "user_roles", schema = "p1_5")
 public enum Role {
     ADMIN("Admin"),
     FINANCE_MANAGER("Finance Manager"),

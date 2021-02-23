@@ -9,7 +9,7 @@ import java.util.Objects;
  * The base unit of the ERS system. ready to include images
  */
 @Entity
-@Table(name = "reimbursements")
+@Table(name = "reimbursements", schema = "p1_5")
 public class Reimbursement {
     @Id @GeneratedValue
     @Column(name = "id")
