@@ -22,7 +22,7 @@ public class Reimbursement {
     @Column(name = "amount", columnDefinition = "numeric(6,2) NOT NULL")
     private Double amount;
 
-    @Generated( value = GenerationTime.INSERT)
+    @Generated(value = GenerationTime.INSERT)
     @ColumnDefault(value = "CURRENT_TIMESTAMP")
     @Column(name = "submitted",columnDefinition = "timestamp NOT NULL")
     private Timestamp submitted;
