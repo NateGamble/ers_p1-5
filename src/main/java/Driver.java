@@ -1,4 +1,7 @@
 import com.fasterxml.classmate.AnnotationConfiguration;
+import com.revature.models.Reimbursement;
+import com.revature.models.ReimbursementStatus;
+import com.revature.models.ReimbursementType;
 import com.revature.models.User;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -6,32 +9,70 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
 
 public class Driver {
 
     private static SessionFactory factory;
-    public static void main(String [] args){
+    public static void main(String [] args) throws IOException {
 
         try{
-            factory = new Configuration().configure().addAnnotatedClass(User.class).buildSessionFactory();
+            factory = new Configuration().configure().addAnnotatedClass(User.class).
+                    addAnnotatedClass(Reimbursement.class).buildSessionFactory();
+
         } catch (Throwable ex){
             System.err.println("This is an error because we didn't set something up right.");
             throw new ExceptionInInitializerError(ex);
         }
 
-        User newUser = new User();
+//        User newUser = new User();
+//
+//        newUser.setUserRole(1);
+//        newUser.setActive(true);
+//        newUser.setEmail("BriansEmail@Gmail.com");
+//        newUser.setFirstname("Brian");
+//        newUser.setUsername("Briguy101");
+//        newUser.setLastname("Withrow");
+//        newUser.setPassword("BadPassword");
+//
+//        User twoUser = new User();
+//
+//        twoUser.setUserRole(1);
+//        twoUser.setActive(true);
+//        twoUser.setEmail("WezleysEmail@Gmail.com");
+//        twoUser.setFirstname("Wezley");
+//        twoUser.setUsername("Wezley101");
+//        twoUser.setLastname("Singleton");
+//        twoUser.setPassword("WorsePassword");
+//
+//        addUser(newUser);
+//        addUser(twoUser);
+//
+//        getUsers();
+//
+//        System.out.println(newUser.getUserId());
 
-        newUser.setUserRole(1);
-        newUser.setActive(true);
-        newUser.setEmail("BriansEmail@Gmail.com");
-        newUser.setFirstname("Brian");
-        newUser.setUsername("Briguy101");
-        newUser.setLastname("Withrow");
-        newUser.setPassword("BadPassword");
+        Reimbursement reimbursement = new Reimbursement();
 
+        reimbursement.setReceipt(Files.readAllBytes(Paths.get("C:\\Users\\Breda\\Desktop\\Revature\\" +
+                "210119-java-enterprise\\ers_p1-5\\src\\main\\resources\\receipt.txt")));
+        reimbursement.setReimbursementStatus(ReimbursementStatus.APPROVED);
+        reimbursement.setReimbursementType(ReimbursementType.FOOD);
+        reimbursement.setAmount(15.56);
+        reimbursement.setDescription("Its a description");
+        reimbursement.setAuthorId(2);
+
+        addReimbursement(reimbursement);
+
+    }
+
+    public static void getUsers(){
         Transaction tx = null;
         Session session = factory.openSession();
 
@@ -53,7 +94,45 @@ public class Driver {
         } finally {
             session.close();
         }
+    }
 
-        //System.out.println(newUser.getUserId());
+    public static void addUser(User user){
+        Transaction tx = null;
+        Session session = factory.openSession();
+
+        try {
+            tx = session.beginTransaction();
+            user.setUserId((Integer) session.save(user));
+
+            System.out.println();
+
+            tx.commit();
+
+        } catch (HibernateException e) {
+            if (tx!= null) tx.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+    }
+
+    public static void addReimbursement(Reimbursement reimbursement){
+        Transaction tx = null;
+        Session session = factory.openSession();
+
+        try {
+            tx = session.beginTransaction();
+            reimbursement.setId((Integer) session.save(reimbursement));
+
+            System.out.println();
+
+            tx.commit();
+
+        } catch (HibernateException e) {
+            if (tx!= null) tx.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
     }
 }

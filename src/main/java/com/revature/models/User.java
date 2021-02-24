@@ -10,26 +10,26 @@ import java.util.Objects;
 @Entity
 @Table(name = "users", schema = "p1_5")
 public class User {
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int userId;
 
-    @Column(name = "username")
+    @Column(name = "username",unique = true, nullable = false, length = 25)
     private String username;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false, length = 256)
     private String password;
 
-    @Column(name = "first_name")
+    @Column(name = "first_name", nullable = false, length = 25)
     private String firstname;
 
-    @Column(name = "last_name")
+    @Column(name = "last_name", nullable = false, length = 25)
     private String lastname;
 
-    @Column(name = "email")
+    @Column(name = "email", nullable = false, length = 256,unique = true)
     private String email;
 
-    @Column(name = "user_role_id")
+    @Column(name = "user_role_id", nullable = false)
     private Integer userRole;
 
     @Column(name = "is_active")

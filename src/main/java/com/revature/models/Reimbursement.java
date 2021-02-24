@@ -1,6 +1,10 @@
 package com.revature.models;
 
+import org.hibernate.annotations.*;
+
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.Objects;
@@ -11,35 +15,41 @@ import java.util.Objects;
 @Entity
 @Table(name = "reimbursements", schema = "p1_5")
 public class Reimbursement {
-    @Id @GeneratedValue
-    @Column(name = "id")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", columnDefinition = "serial NOT NULL")
     private Integer id;
 
-    @Column(name = "amount")
+    @Column(name = "amount", columnDefinition = "numeric(6,2) NOT NULL")
     private Double amount;
 
-    @Column(name = "submitted")
+    @Temporal(value = TemporalType.TIMESTAMP)
+    @Generated( value = GenerationTime.INSERT)
+    @ColumnDefault(value = "CURRENT_TIMESTAMP")
+    @Column(name = "submitted",columnDefinition = "timestamp NOT NULL")
     private Timestamp submitted;
 
-    @Column(name = "resolved")
+    @ColumnDefault(value = "NULL")
+    @Column(name = "resolved", columnDefinition = "timestamp NULL")
     private Timestamp resolved;
 
-    @Column(name = "description")
+    @ColumnDefault(value = "NULL")
+    @Column(name = "description", columnDefinition = "varchar(1000) NULL")
     private String description;
 
-    @Column(name = "receipt")
-    private File receipt;
+    @Lob
+    @Column(name = "receipt", columnDefinition = "bytea")
+    private byte[] receipt;
 
-    @Column(name = "author_id")
+    @Column(name = "author_id", columnDefinition = "int4 NOT NULL")
     private int authorId;
 
-    @Column(name = "resolver_id")
+    @Column(name = "resolver_id", columnDefinition = "int4 NULL")
     private int resolverId;
 
-    @Column(name = "reimbursement_status_id")
+    @Column(name = "reimbursement_status_id", columnDefinition = "int4 NOT NULL")
     private ReimbursementStatus reimbursementStatus;
 
-    @Column(name = "reimbursement_type_id")
+    @Column(name = "reimbursement_type_id", columnDefinition = "int4 NOT NULL")
     private ReimbursementType reimbursementType;
 
     public Reimbursement() {
@@ -79,11 +89,11 @@ public class Reimbursement {
         this.reimbursementType = reimbursementType;
     }
 
-    public File getReceipt() {
+    public byte[] getReceipt() {
         return receipt;
     }
 
-    public void setReceipt(File receipt) {
+    public void setReceipt(byte[] receipt) {
         this.receipt = receipt;
     }
 
