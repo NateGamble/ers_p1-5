@@ -71,8 +71,8 @@ public class Driver {
 //        addReimbursement(reimbursement);
 //        getReimbursements();
         // System.out.println(ReimbursementStatus.PENDING.ordinal());
-        List reimbursements = new ReimbursementsRepository().getAllReimbSetByStatus(ReimbursementStatus.APPROVED);
-        System.out.println("Number of reimbursements with code approved: " + reimbursements.size());
+        List reimbursements = new ReimbursementsRepository().getAllReimbSetByStatus(ReimbursementStatus.PENDING.ordinal());
+        System.out.println("Number of reimbursements with code pending: " + reimbursements.size());
         reimbursements.forEach(System.out::println);
 
     }

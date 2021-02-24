@@ -79,13 +79,6 @@ public class ReimbursementsRepository {
             tx = session.beginTransaction();
             reimbursements = session.createQuery("FROM Reimbursement").list();
 
-            // System.out.println(reimbursements.size());
-            for (Iterator iterator = reimbursements.iterator(); iterator.hasNext();){
-                Reimbursement getReimbursement = (Reimbursement) iterator.next();
-                // System.out.println("description: " + getReimbursement.getDescription());
-            }
-            tx.commit();
-
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
             e.printStackTrace();
@@ -96,7 +89,7 @@ public class ReimbursementsRepository {
     }
 
     @SuppressWarnings("unchecked")
-    public List<Reimbursement> getAllReimbSetByStatus(ReimbursementStatus status) {
+    public List<Reimbursement> getAllReimbSetByStatus(int statusId) {
         List reimbursements = null;
         Transaction tx = null;
         Session session = app.getFactory().openSession();
@@ -104,16 +97,10 @@ public class ReimbursementsRepository {
         try {
             tx = session.beginTransaction();
             String hql = "FROM Reimbursement r where r.reimbursementStatus = :status";
+            // System.out.println("Reimbursement status passed in is: " + ReimbursementStatus.getByNumber(statusId + 1));
             reimbursements = session.createQuery(hql)
-                                        .setParameter("status", status)
+                                        .setParameter("status", ReimbursementStatus.getByNumber(statusId + 1))
                                         .list();
-
-            // System.out.println(reimbursements.size());
-            for (Iterator iterator = reimbursements.iterator(); iterator.hasNext();){
-                Reimbursement getReimbursement = (Reimbursement) iterator.next();
-                // System.out.println("description: " + getReimbursement.getDescription());
-            }
-            tx.commit();
 
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
@@ -121,16 +108,6 @@ public class ReimbursementsRepository {
         } finally {
             session.close();
         }
-
-        // try(Connection conn = ConnectionFactory.getInstance().getConnection()) {
-        //     String sql = baseQuery + "WHERE er.reimbursement_status_id=? order by er.id";
-        //     PreparedStatement ps = conn.prepareStatement(sql);
-        //     ps.setInt(1,statusId);
-        //     ResultSet rs = ps.executeQuery();
-        //     reimbursements = mapResultSetDTO(rs);
-        // } catch (SQLException e) {
-        //     e.printStackTrace();
-        // }
         return reimbursements;
     }
 
@@ -140,18 +117,30 @@ public class ReimbursementsRepository {
      * @return returns an Option Reimbursement object
      * @throws SQLException e
      */
+    @SuppressWarnings("unchecked")
     public Optional<Reimbursement> getAReimbByReimbId(Integer reimbId) throws SQLException {
         Optional<Reimbursement> reimbursement = Optional.empty();
-        // try(Connection conn = ConnectionFactory.getInstance().getConnection()) {
-        //     String sql = baseQuery + "WHERE er.id=? order by er.id";
-        //     PreparedStatement ps = conn.prepareStatement(sql);
+        // createQuery().stream.findFirst()
+        // reimbursement.get() in service
+        
+        Transaction tx = null;
+        Session session = app.getFactory().openSession();
 
-        //     ps.setInt(1,reimbId);
+        try {
+            tx = session.beginTransaction();
+            String hql = "FROM Reimbursement r where r.id = :id";
+            // System.out.println("Reimbursement id passed in is: " + reimbId);
+            reimbursement = session.createQuery(hql)
+                            .setParameter("id", reimbId)
+                            .stream()
+                            .findFirst();
 
-        //     ResultSet rs = ps.executeQuery();
-
-        //     reimbursement = mapResultSet(rs).stream().findFirst();
-        // }
+        } catch (HibernateException e) {
+            if (tx!= null) tx.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
         return reimbursement;
     }
 
@@ -161,20 +150,28 @@ public class ReimbursementsRepository {
      * @return a set of reimbursements mapped by the MapResultSet method
      * @throws SQLException e
      */
+    @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByAuthorId(Integer authorId){
-        List<Reimbursement> reimbursements = new ArrayList<>();
-        // try(Connection conn = ConnectionFactory.getInstance().getConnection()) {
-        //     String sql = baseQuery + "WHERE er.author_id=? order by er.id";
-        //     PreparedStatement ps = conn.prepareStatement(sql);
+        List<Reimbursement> reimbursements = null;
+        
+        Transaction tx = null;
+        Session session = app.getFactory().openSession();
 
-        //     ps.setInt(1,authorId);
+        try {
+            tx = session.beginTransaction();
+            String hql = "FROM Reimbursement r where r.authorId = :authorId";
+            // System.out.println("Reimbursement id passed in is: " + authorId);
+            reimbursements = session.createQuery(hql)
+                            .setParameter("authorId", authorId)
+                            .list();
 
-        //     ResultSet rs = ps.executeQuery();
+        } catch (HibernateException e) {
+            if (tx!= null) tx.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
 
-        //     reimbursements = mapResultSetDTO(rs);
-        // } catch (SQLException e) {
-        //     e.printStackTrace();
-        // }
         return reimbursements;
     }
 
@@ -185,8 +182,30 @@ public class ReimbursementsRepository {
      * @return a set of reimbursements mapped by the MapResultSet method
      * @throws SQLException e
      */
+    @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByAuthorIdAndStatus(Integer authorId, ReimbursementStatus reStat) throws SQLException {
-        List<Reimbursement> reimbursements = new ArrayList<>();
+        List<Reimbursement> reimbursements = null;
+        
+        Transaction tx = null;
+        Session session = app.getFactory().openSession();
+
+        try {
+            tx = session.beginTransaction();
+            String hql = "FROM Reimbursement r where r.authorId = :authorId"
+                            + " and r.status = :status";
+            // System.out.println("Reimbursement id passed in is: " + authorId);
+            reimbursements = session.createQuery(hql)
+                            .setParameter("authorId", authorId)
+                            .list();
+
+        } catch (HibernateException e) {
+            if (tx!= null) tx.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
+        
         // try(Connection conn = ConnectionFactory.getInstance().getConnection()) {
         //     String sql = baseQuery + "WHERE er.author_id=? AND er.reimbursement_status_id=? order by er.id";
         //     PreparedStatement ps = conn.prepareStatement(sql);

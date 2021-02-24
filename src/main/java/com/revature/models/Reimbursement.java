@@ -5,6 +5,10 @@ import org.hibernate.annotations.*;
 import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+
+import com.revature.util.ReimbursementTypeConverter;
+import com.revature.util.StatusCodeConverter;
+
 import java.sql.Timestamp;
 import java.util.Objects;
 
@@ -46,11 +50,11 @@ public class Reimbursement {
     private Integer resolverId;
 
     @Column(name = "reimbursement_status_id", columnDefinition = "int4 NOT NULL")
-    @Enumerated(EnumType.ORDINAL)
+    @Convert(converter = StatusCodeConverter.class)
     private ReimbursementStatus reimbursementStatus;
 
     @Column(name = "reimbursement_type_id", columnDefinition = "int4 NOT NULL")
-    @Enumerated(EnumType.ORDINAL)
+    @Convert(converter = ReimbursementTypeConverter.class)
     private ReimbursementType reimbursementType;
 
     public Reimbursement() {
