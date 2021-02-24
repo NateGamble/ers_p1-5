@@ -5,7 +5,6 @@ import org.hibernate.annotations.*;
 import javax.persistence.*;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import java.io.File;
 import java.sql.Timestamp;
 import java.util.Objects;
 
@@ -13,6 +12,7 @@ import java.util.Objects;
  * The base unit of the ERS system. ready to include images
  */
 @Entity
+@DynamicInsert
 @Table(name = "reimbursements", schema = "p1_5")
 public class Reimbursement {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +22,6 @@ public class Reimbursement {
     @Column(name = "amount", columnDefinition = "numeric(6,2) NOT NULL")
     private Double amount;
 
-    @Temporal(value = TemporalType.TIMESTAMP)
     @Generated( value = GenerationTime.INSERT)
     @ColumnDefault(value = "CURRENT_TIMESTAMP")
     @Column(name = "submitted",columnDefinition = "timestamp NOT NULL")
@@ -36,7 +35,7 @@ public class Reimbursement {
     @Column(name = "description", columnDefinition = "varchar(1000) NULL")
     private String description;
 
-    @Lob
+    @Type(type="org.hibernate.type.BinaryType")
     @Column(name = "receipt", columnDefinition = "bytea")
     private byte[] receipt;
 
@@ -44,7 +43,7 @@ public class Reimbursement {
     private int authorId;
 
     @Column(name = "resolver_id", columnDefinition = "int4 NULL")
-    private int resolverId;
+    private Integer resolverId;
 
     @Column(name = "reimbursement_status_id", columnDefinition = "int4 NOT NULL")
     private ReimbursementStatus reimbursementStatus;

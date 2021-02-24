@@ -60,15 +60,15 @@ public class Driver {
 
         Reimbursement reimbursement = new Reimbursement();
 
-        reimbursement.setReceipt(Files.readAllBytes(Paths.get("C:\\Users\\Breda\\Desktop\\Revature\\" +
-                "210119-java-enterprise\\ers_p1-5\\src\\main\\resources\\receipt.txt")));
+        reimbursement.setReceipt(Files.readAllBytes(Paths.get("src/main/resources/receipt.txt")));
         reimbursement.setReimbursementStatus(ReimbursementStatus.APPROVED);
         reimbursement.setReimbursementType(ReimbursementType.FOOD);
         reimbursement.setAmount(15.56);
         reimbursement.setDescription("Its a description");
         reimbursement.setAuthorId(2);
 
-        addReimbursement(reimbursement);
+        // addReimbursement(reimbursement);
+        getReimbursements();
 
     }
 
@@ -126,6 +126,30 @@ public class Driver {
 
             System.out.println();
 
+            tx.commit();
+
+        } catch (HibernateException e) {
+            if (tx!= null) tx.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+    }
+
+    public static void getReimbursements(){
+        Transaction tx = null;
+        Session session = factory.openSession();
+
+        try {
+            tx = session.beginTransaction();
+            //newUser.setUserId((Integer) session.save(newUser));
+            List reimbursements = session.createQuery("FROM Reimbursement").list();
+
+            System.out.println(reimbursements.size());
+            for (Iterator iterator = reimbursements.iterator(); iterator.hasNext();){
+                Reimbursement getReimbursement = (Reimbursement) iterator.next();
+                System.out.println("description: " + getReimbursement.getDescription());
+            }
             tx.commit();
 
         } catch (HibernateException e) {
