@@ -6,6 +6,13 @@ import com.revature.models.ReimbursementStatus;
 import com.revature.models.ReimbursementType;
 import com.revature.util.ConnectionFactory;
 
+import static com.revature.util.AppState.app;
+
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -37,48 +44,83 @@ public class ReimbursementsRepository {
 
     //---------------------------------- CREATE -------------------------------------------- //
     /**
-     * Adds a reimburement to the database, Does not handle Images!
+     * Adds a reimburement to the database
      * @param reimbursement the reimbursement to be added to the DB
      * @throws SQLException e
      * @throws IOException e
      */
-    // TODO add support to persist receipt images to data source
     public boolean addReimbursement(Reimbursement reimbursement) {
-        try(Connection conn = ConnectionFactory.getInstance().getConnection()) {
-            String sql = baseInsert +
-                    "(amount, description, author_id, " +
-                    "reimbursement_status_id, reimbursement_type_id)\n" +
-                    "VALUES(?, ?, ?, 1, ?);\n";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setDouble(1,reimbursement.getAmount());
-            ps.setString(2,reimbursement.getDescription());
-            ps.setInt(3,reimbursement.getAuthorId());
-            //Reimbursements are submitted with PENDING  status by Default!
-            ps.setInt(4,reimbursement.getReimbursementType().ordinal() + 1);
-            //get the number of affected rows
-            int rowsInserted = ps.executeUpdate();
-            return rowsInserted != 0;
-        } catch (SQLException e) {
+        Transaction tx = null;
+        Session session = app.getFactory().openSession();
+
+        try {
+            tx = session.beginTransaction();
+            session.save(reimbursement);
+
+            tx.commit();
+
+        } catch (HibernateException e) {
+            if (tx!= null) tx.rollback();
             e.printStackTrace();
+        } finally {
+            session.close();
         }
-        return false;
+
+        // try(Connection conn = ConnectionFactory.getInstance().getConnection()) {
+        //     String sql = baseInsert +
+        //             "(amount, description, author_id, " +
+        //             "reimbursement_status_id, reimbursement_type_id)\n" +
+        //             "VALUES(?, ?, ?, 1, ?);\n";
+        //     PreparedStatement ps = conn.prepareStatement(sql);
+        //     ps.setDouble(1,reimbursement.getAmount());
+        //     ps.setString(2,reimbursement.getDescription());
+        //     ps.setInt(3,reimbursement.getAuthorId());
+        //     //Reimbursements are submitted with PENDING  status by Default!
+        //     ps.setInt(4,reimbursement.getReimbursementType().ordinal() + 1);
+        //     //get the number of affected rows
+        //     int rowsInserted = ps.executeUpdate();
+        //     return rowsInserted != 0;
+        // } catch (SQLException e) {
+        //     e.printStackTrace();
+        // }
+        return reimbursement.getId() != null;
     }
 
     //---------------------------------- READ -------------------------------------------- //
 
     public List<RbDTO> getAllReimbursements() {
-        List<RbDTO> reimbursements = new ArrayList<>();
-        try(Connection conn = ConnectionFactory.getInstance().getConnection()) {
-            String sql = baseQuery + " order by er.id";
-            PreparedStatement ps = conn.prepareStatement(sql);
+        List reimbursements = null;
+        Transaction tx = null;
+        Session session = app.getFactory().openSession();
 
-            ResultSet rs = ps.executeQuery();
+        try {
+            tx = session.beginTransaction();
+            reimbursements = session.createQuery("FROM Reimbursement").list();
 
-            reimbursements = mapResultSetDTO(rs);
-        } catch (SQLException e) {
+            // System.out.println(reimbursements.size());
+            for (Iterator iterator = reimbursements.iterator(); iterator.hasNext();){
+                Reimbursement getReimbursement = (Reimbursement) iterator.next();
+                // System.out.println("description: " + getReimbursement.getDescription());
+            }
+            tx.commit();
+
+        } catch (HibernateException e) {
+            if (tx!= null) tx.rollback();
             e.printStackTrace();
+        } finally {
+            session.close();
         }
-        return reimbursements;
+        // try(Connection conn = ConnectionFactory.getInstance().getConnection()) {
+        //     String sql = baseQuery + " order by er.id";
+        //     PreparedStatement ps = conn.prepareStatement(sql);
+
+        //     ResultSet rs = ps.executeQuery();
+
+        //     reimbursements = mapResultSetDTO(rs);
+        // } catch (SQLException e) {
+        //     e.printStackTrace();
+        // }
+        return (List<RbDTO>) reimbursements;
     }
 
     public List<RbDTO> getAllReimbSetByStatus(Integer statusId) {

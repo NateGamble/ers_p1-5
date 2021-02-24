@@ -31,15 +31,15 @@ public class Driver {
             throw new ExceptionInInitializerError(ex);
         }
 
-//        User newUser = new User();
-//
-//        newUser.setUserRole(1);
-//        newUser.setActive(true);
-//        newUser.setEmail("BriansEmail@Gmail.com");
-//        newUser.setFirstname("Brian");
-//        newUser.setUsername("Briguy101");
-//        newUser.setLastname("Withrow");
-//        newUser.setPassword("BadPassword");
+    //    User newUser = new User();
+
+    //    newUser.setUserRole(1);
+    //    newUser.setActive(true);
+    //    newUser.setEmail("BriansEmail@Gmail.com");
+    //    newUser.setFirstname("Brian");
+    //    newUser.setUsername("Briguy101");
+    //    newUser.setLastname("Withrow");
+    //    newUser.setPassword("BadPassword");
 //
 //        User twoUser = new User();
 //
@@ -51,12 +51,12 @@ public class Driver {
 //        twoUser.setLastname("Singleton");
 //        twoUser.setPassword("WorsePassword");
 //
-//        addUser(newUser);
+    //    addUser(newUser);
 //        addUser(twoUser);
 //
 //        getUsers();
 //
-//        System.out.println(newUser.getUserId());
+    //    System.out.println(newUser.getUserId());
 
         Reimbursement reimbursement = new Reimbursement();
 
@@ -67,7 +67,7 @@ public class Driver {
         reimbursement.setDescription("Its a description");
         reimbursement.setAuthorId(2);
 
-        // addReimbursement(reimbursement);
+        addReimbursement(reimbursement);
         getReimbursements();
 
     }
@@ -102,7 +102,7 @@ public class Driver {
 
         try {
             tx = session.beginTransaction();
-            user.setUserId((Integer) session.save(user));
+            session.save(user);
 
             System.out.println();
 
@@ -122,7 +122,7 @@ public class Driver {
 
         try {
             tx = session.beginTransaction();
-            reimbursement.setId((Integer) session.save(reimbursement));
+            session.save(reimbursement);
 
             System.out.println();
 
