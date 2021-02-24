@@ -31,16 +31,15 @@ public class Driver {
             throw new ExceptionInInitializerError(ex);
         }
 
-    //    User newUser = new User();
+        User newUser = new User();
 
-    //    newUser.setUserRole(1);
-    //    newUser.setActive(true);
-    //    newUser.setEmail("BriansEmail@Gmail.com");
-    //    newUser.setFirstname("Brian");
-    //    newUser.setUsername("Briguy101");
-    //    newUser.setLastname("Withrow");
-    //    newUser.setPassword("BadPassword");
-//
+        newUser.setUserRole(1);
+        newUser.setEmail("Blah2@Gmail.com");
+        newUser.setFirstname("Blob");
+        newUser.setUsername("Bobloblaw2");
+        newUser.setLastname("Law");
+        newUser.setPassword("BestLawAgent");
+
 //        User twoUser = new User();
 //
 //        twoUser.setUserRole(1);
@@ -51,24 +50,24 @@ public class Driver {
 //        twoUser.setLastname("Singleton");
 //        twoUser.setPassword("WorsePassword");
 //
-    //    addUser(newUser);
+        addUser(newUser);
 //        addUser(twoUser);
 //
 //        getUsers();
 //
     //    System.out.println(newUser.getUserId());
 
-        Reimbursement reimbursement = new Reimbursement();
-
-        reimbursement.setReceipt(Files.readAllBytes(Paths.get("src/main/resources/receipt.txt")));
-        reimbursement.setReimbursementStatus(ReimbursementStatus.APPROVED);
-        reimbursement.setReimbursementType(ReimbursementType.FOOD);
-        reimbursement.setAmount(15.56);
-        reimbursement.setDescription("Its a description");
-        reimbursement.setAuthorId(2);
-
-        addReimbursement(reimbursement);
-        getReimbursements();
+//        Reimbursement reimbursement = new Reimbursement();
+//
+//        reimbursement.setReceipt(Files.readAllBytes(Paths.get("src/main/resources/receipt.txt")));
+//        reimbursement.setReimbursementStatus(ReimbursementStatus.APPROVED);
+//        reimbursement.setReimbursementType(ReimbursementType.FOOD);
+//        reimbursement.setAmount(15.56);
+//        reimbursement.setDescription("Its a description");
+//        reimbursement.setAuthorId(2);
+//
+//        addReimbursement(reimbursement);
+//        getReimbursements();
 
     }
 

@@ -1,6 +1,10 @@
 package com.revature.models;
 
 
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.Generated;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -8,32 +12,33 @@ import java.util.Objects;
  * Base constructs for users, store only the integer representation of roles in the db for easier role checking
  */
 @Entity
+@DynamicInsert
 @Table(name = "users", schema = "p1_5")
 public class User {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", columnDefinition = "serial")
     private int userId;
 
-    @Column(name = "username",unique = true, nullable = false, length = 25)
+    @Column(name = "username", columnDefinition = "varchar(25) unique not null")
     private String username;
 
-    @Column(name = "password", nullable = false, length = 256)
+    @Column(name = "password", columnDefinition = "varchar(256) not null")
     private String password;
 
-    @Column(name = "first_name", nullable = false, length = 25)
+    @Column(name = "first_name", columnDefinition = "varchar(25) not null")
     private String firstname;
 
-    @Column(name = "last_name", nullable = false, length = 25)
+    @Column(name = "last_name", columnDefinition = "varchar(25) not null")
     private String lastname;
 
-    @Column(name = "email", nullable = false, length = 256,unique = true)
+    @Column(name = "email", columnDefinition = "varchar(256) unique not null")
     private String email;
 
-    @Column(name = "user_role_id", nullable = false)
+    @Column(name = "user_role_id", columnDefinition = "int not null")
     private Integer userRole;
 
-    @Column(name = "is_active")
-    private boolean isActive;
+    @Column(name = "is_active", columnDefinition = "boolean default true")
+    private boolean isActive = true;
 
     public User() {
         super();
