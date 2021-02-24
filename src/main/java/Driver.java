@@ -33,47 +33,7 @@ public class Driver {
             throw new ExceptionInInitializerError(ex);
         }
 
-        // User newUser = new User();
 
-        // newUser.setUserRole(1);
-        // newUser.setEmail("Blah2@Gmail.com");
-        // newUser.setFirstname("Blob");
-        // newUser.setUsername("Bobloblaw2");
-        // newUser.setLastname("Law");
-        // newUser.setPassword("BestLawAgent");
-
-//        User twoUser = new User();
-//
-//        twoUser.setUserRole(1);
-//        twoUser.setActive(true);
-//        twoUser.setEmail("WezleysEmail@Gmail.com");
-//        twoUser.setFirstname("Wezley");
-//        twoUser.setUsername("Wezley101");
-//        twoUser.setLastname("Singleton");
-//        twoUser.setPassword("WorsePassword");
-//
-        // addUser(newUser);
-//        addUser(twoUser);
-//
-//        getUsers();
-//
-    //    System.out.println(newUser.getUserId());
-
-//        Reimbursement reimbursement = new Reimbursement();
-//
-//        reimbursement.setReceipt(Files.readAllBytes(Paths.get("src/main/resources/receipt.txt")));
-//        reimbursement.setReimbursementStatus(ReimbursementStatus.APPROVED);
-//        reimbursement.setReimbursementType(ReimbursementType.FOOD);
-//        reimbursement.setAmount(15.56);
-//        reimbursement.setDescription("Its a description");
-//        reimbursement.setAuthorId(2);
-//
-//        addReimbursement(reimbursement);
-//        getReimbursements();
-        // System.out.println(ReimbursementStatus.PENDING.ordinal());
-        List reimbursements = new ReimbursementsRepository().getAllReimbSetByStatus(ReimbursementStatus.PENDING.ordinal());
-        System.out.println("Number of reimbursements with code pending: " + reimbursements.size());
-        reimbursements.forEach(System.out::println);
 
     }
 
