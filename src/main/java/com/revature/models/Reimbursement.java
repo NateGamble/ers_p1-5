@@ -46,9 +46,11 @@ public class Reimbursement {
     private Integer resolverId;
 
     @Column(name = "reimbursement_status_id", columnDefinition = "int4 NOT NULL")
+    @Enumerated(EnumType.ORDINAL)
     private ReimbursementStatus reimbursementStatus;
 
     @Column(name = "reimbursement_type_id", columnDefinition = "int4 NOT NULL")
+    @Enumerated(EnumType.ORDINAL)
     private ReimbursementType reimbursementType;
 
     public Reimbursement() {

@@ -16,9 +16,6 @@ public class AppState {
             factory = new Configuration().configure()
                             .addAnnotatedClass(User.class)
                             .addAnnotatedClass(Reimbursement.class)
-                            .addAnnotatedClass(ReimbursementStatus.class)
-                            .addAnnotatedClass(Role.class)
-                            .addAnnotatedClass(ReimbursementType.class)
                             .buildSessionFactory();
 
         } catch (Throwable ex){

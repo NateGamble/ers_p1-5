@@ -3,6 +3,8 @@ import com.revature.models.Reimbursement;
 import com.revature.models.ReimbursementStatus;
 import com.revature.models.ReimbursementType;
 import com.revature.models.User;
+import com.revature.repositories.ReimbursementsRepository;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -31,14 +33,14 @@ public class Driver {
             throw new ExceptionInInitializerError(ex);
         }
 
-        User newUser = new User();
+        // User newUser = new User();
 
-        newUser.setUserRole(1);
-        newUser.setEmail("Blah2@Gmail.com");
-        newUser.setFirstname("Blob");
-        newUser.setUsername("Bobloblaw2");
-        newUser.setLastname("Law");
-        newUser.setPassword("BestLawAgent");
+        // newUser.setUserRole(1);
+        // newUser.setEmail("Blah2@Gmail.com");
+        // newUser.setFirstname("Blob");
+        // newUser.setUsername("Bobloblaw2");
+        // newUser.setLastname("Law");
+        // newUser.setPassword("BestLawAgent");
 
 //        User twoUser = new User();
 //
@@ -50,7 +52,7 @@ public class Driver {
 //        twoUser.setLastname("Singleton");
 //        twoUser.setPassword("WorsePassword");
 //
-        addUser(newUser);
+        // addUser(newUser);
 //        addUser(twoUser);
 //
 //        getUsers();
@@ -68,6 +70,10 @@ public class Driver {
 //
 //        addReimbursement(reimbursement);
 //        getReimbursements();
+        // System.out.println(ReimbursementStatus.PENDING.ordinal());
+        List reimbursements = new ReimbursementsRepository().getAllReimbSetByStatus(ReimbursementStatus.APPROVED);
+        System.out.println("Number of reimbursements with code approved: " + reimbursements.size());
+        reimbursements.forEach(System.out::println);
 
     }
 
