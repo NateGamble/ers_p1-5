@@ -8,6 +8,7 @@ import com.revature.models.Reimbursement;
 import com.revature.models.ReimbursementStatus;
 import com.revature.models.ReimbursementType;
 import com.revature.repositories.ReimbursementsRepository;
+import com.revature.util.StatusCodeConverter;
 
 import org.hibernate.boot.model.naming.IllegalIdentifierException;
 
@@ -17,7 +18,7 @@ import java.util.List;
  * Service layer for validating reimbursements before sending to or from the Database
  */
 public class ReimbursementService {
-    private final ReimbursementsRepository reimbRepo = new ReimbursementsRepository();
+    private ReimbursementsRepository reimbRepo = new ReimbursementsRepository();
 
     /**
      * Gets all Reimbursements from the DataBase
@@ -57,6 +58,17 @@ public class ReimbursementService {
     }
 
     /**
+     * Gets all reimbursements by a specified type
+     * @param typeId ordinal number of the type requested, between 1-4
+     * @return A list of Reimbursement objects
+     */
+    public List<Reimbursement> getReimbByType(ReimbursementType type){
+        List<Reimbursement> reimb = reimbRepo.getAllReimbSetByType(type);
+        
+        return reimb;
+    }
+
+    /**
      * Gets all reimbursements by a specified status
      * @param statusId ordinal number of the type requested, between 1-3
      * @return A list of Reimbursement objects
@@ -66,6 +78,17 @@ public class ReimbursementService {
             throw new EnumOutOfBoundsException("THE PROVIDED USER ID CANNOT BE LESS THAN OR EQUAL TO ZERO");
         }
         List<Reimbursement> reimb = reimbRepo.getAllReimbSetByStatus(ReimbursementStatus.getByNumber(statusId));
+        
+        return reimb;
+    }
+
+    /**
+     * Gets all reimbursements by a specified status
+     * @param statusId ordinal number of the type requested, between 1-3
+     * @return A list of Reimbursement objects
+     */
+    public List<Reimbursement> getReimbByStatus(ReimbursementStatus status){
+        List<Reimbursement> reimb = reimbRepo.getAllReimbSetByStatus(status);
         
         return reimb;
     }
@@ -81,7 +104,7 @@ public class ReimbursementService {
         if(!reimbRepo.addReimbursement(reimb)){
             throw new PersistenceException("Something went wrong trying to save this reimbursement");
         }
-        System.out.println(reimb);
+        // System.out.println(reimb);
     }
 
     /**
@@ -95,7 +118,7 @@ public class ReimbursementService {
         if(!reimbRepo.updateEMP(reimb)){
             throw new PersistenceException("Something went wrong trying to save this reimbursement");
         }
-        System.out.println(reimb);
+        // System.out.println(reimb);
     }
 
     /**
@@ -107,7 +130,8 @@ public class ReimbursementService {
         if (reimbId <= 0 || resolverId <=0){
             throw new IllegalIdentifierException("Invalid user field values provided!");
         }
-        if(!reimbRepo.updateFIN(resolverId, 2, reimbId)){
+        int statusCode = new StatusCodeConverter().convertToDatabaseColumn(ReimbursementStatus.APPROVED);
+        if(!reimbRepo.updateFIN(resolverId, statusCode, reimbId)) {
             throw new PersistenceException("Something went wrong trying to approve this reimbursement");
         }
     }
@@ -121,7 +145,8 @@ public class ReimbursementService {
         if (reimbId <= 0){
             throw new IllegalIdentifierException("Invalid user field values provided!");
         }
-        if(!reimbRepo.updateFIN(resolverId, 3, reimbId)){
+        int statusCode = new StatusCodeConverter().convertToDatabaseColumn(ReimbursementStatus.DENIED);
+        if(!reimbRepo.updateFIN(resolverId, statusCode, reimbId)){
             throw new PersistenceException("Something went wrong trying to deny this reimbursement");
         }
     }
@@ -135,6 +160,7 @@ public class ReimbursementService {
         if (reimb == null) return false;
         if (reimb.getAmount() == null || reimb.getAmount() <= 0 ) return false;
         if (reimb.getDescription() == null || reimb.getDescription().trim().equals("")) return false;
+        if (reimb.getAuthor() == null) return false;
         if (reimb.getAuthor().getUserId() <= 0 ) return false;
         if (reimb.getReimbursementType() == null ) return false;
         return true;
