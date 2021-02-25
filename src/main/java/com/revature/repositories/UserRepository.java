@@ -1,8 +1,9 @@
 package com.revature.repositories;
 
-import com.revature.models.Reimbursement;
 import com.revature.models.User;
-import com.revature.util.ConnectionFactory;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -12,6 +13,7 @@ import java.util.*;
 import static com.revature.util.AppState.app;
 
 public class UserRepository {
+    private static final Logger logger = LogManager.getLogger(UserRepository.class);
 
     public UserRepository(){
         super();
@@ -26,6 +28,7 @@ public class UserRepository {
      * @throws HibernateException e
      */
     public boolean addUser(User newUser)  {
+        logger.info("Adding new user: \n\t" + newUser);
         Transaction tx = null;
         Session session = app.getFactory().openSession();
         Integer valueCheck = null;
@@ -33,14 +36,12 @@ public class UserRepository {
         try {
             tx = session.beginTransaction();
             valueCheck = (Integer) session.save(newUser);
-
-            System.out.println();
-
             tx.commit();
-
+            logger.info("User saved to database");
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }
@@ -55,7 +56,9 @@ public class UserRepository {
      * @return return a list of User objects.
      * @throws HibernateException e
      */
+    @SuppressWarnings("unchecked")
     public List<User> getAllusers() {
+        logger.info("Retrieving all users from database");
         List<User> users = new ArrayList<>();
         Transaction tx = null;
         Session session = app.getFactory().openSession();
@@ -65,10 +68,10 @@ public class UserRepository {
             users = session.createQuery("FROM User").list();
 
             tx.commit();
-
+            logger.info("Retrieved users successfully");
         } catch (HibernateException e) {
-            if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }
@@ -82,7 +85,9 @@ public class UserRepository {
      * @return returns an Optional user
      * @throws HibernateException e
      */
+    @SuppressWarnings("unchecked")
     public Optional<User> getAUserByEmail(String email) {
+        logger.info("Retrieving user with email: " + email);
         Transaction tx = null;
         Session session = app.getFactory().openSession();
         Optional<User> user = Optional.empty();
@@ -93,10 +98,11 @@ public class UserRepository {
                     .setParameter("email", email).stream().findFirst();
 
             tx.commit();
-
+            logger.info("Retrieved relevant users");
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }
@@ -109,7 +115,9 @@ public class UserRepository {
      * @param userName Username used to find user.
      * @return Optional object which may or may not contain a User.
      */
+    @SuppressWarnings("unchecked")
     public Optional<User> getAUserByUsername(String userName) {
+        logger.info("Retrieving user with username: " + userName);
         Optional<User> user = Optional.empty();
         Transaction tx = null;
         Session session = app.getFactory().openSession();
@@ -120,10 +128,12 @@ public class UserRepository {
                     .setParameter("username", userName).stream().findFirst();
 
             tx.commit();
+            logger.info("Retrieved relevant users");
 
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }
@@ -137,7 +147,10 @@ public class UserRepository {
      * @return Optional object which may or may not contain a User.
      * @throws
      */
+    @SuppressWarnings("unchecked")
     public Optional<User> getAUserByUsernameAndPassword(String userName, String password) {
+        logger.info("Retrieving user with username: " + userName + 
+                        " and password: ******");
         Optional<User> user = Optional.empty();
         Transaction tx = null;
         Session session = app.getFactory().openSession();
@@ -148,10 +161,11 @@ public class UserRepository {
                     .setParameter("username", userName).setParameter("password", password).stream().findFirst();
 
             tx.commit();
-
+            logger.info("Retrieved relevant users");
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }
@@ -164,7 +178,9 @@ public class UserRepository {
      * @return Optional object which may or may not contain a User.
      * @throws
      */
+    @SuppressWarnings("unchecked")
     public Optional<User> getAUserById(int id) {
+        logger.info("Retrieving user with id: " + id);
         Optional<User> user = Optional.empty();
         Transaction tx = null;
         Session session = app.getFactory().openSession();
@@ -175,10 +191,11 @@ public class UserRepository {
                     .setParameter("id", id).stream().findFirst();
 
             tx.commit();
-
+            logger.info("Retrieved relevant users");
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }
@@ -193,6 +210,7 @@ public class UserRepository {
      * @return
      */
     public boolean updateAUser(User newUser) {
+        logger.info("Updating user:\n\t" + newUser);
         Transaction tx = null;
         Session session = app.getFactory().openSession();
         boolean updated = false;
@@ -204,10 +222,11 @@ public class UserRepository {
 
             updated = true;
             tx.commit();
-
+            logger.info("Updated user");
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }
@@ -223,6 +242,7 @@ public class UserRepository {
      * @throws HibernateException e
      */
     public boolean deleteAUserById(Integer userId) {
+        logger.info("Deleting user with id: " + userId);
         Transaction tx = null;
         Session session = app.getFactory().openSession();
         boolean deleted = false;
@@ -235,42 +255,17 @@ public class UserRepository {
 
             deleted = true;
             tx.commit();
-
+            logger.info("User deleted");
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }
 
         return deleted;
     }
-
-
-
-//    //---------------------------------- UTIL -------------------------------------------- //
-//
-//    /**
-//     * A method to map the result sets from the users queries
-//     * @param rs a result set
-//     * @return a set of users
-//     * @throws SQLException e
-//     */
-//    private List<User> mapResultSet(ResultSet rs) throws SQLException {
-//        List<User> users = new ArrayList<>();
-//        while (rs.next()){
-//            User temp = new User();
-//            temp.setUserId(rs.getInt("id"));
-//            temp.setUsername(rs.getString("username"));
-//            temp.setPassword(rs.getString("password"));
-//            temp.setEmail(rs.getString("email"));
-//            temp.setFirstname(rs.getString("first_name"));
-//            temp.setLastname(rs.getString("last_name"));
-//            temp.setUserRole(rs.getInt("user_role_id"));
-//            users.add(temp);
-//        }
-//        return users;
-//    }
 
 
 }
