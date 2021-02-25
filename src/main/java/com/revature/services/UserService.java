@@ -1,5 +1,8 @@
 package com.revature.services;
 
+import com.revature.exceptions.InvalidColumnException;
+import com.revature.exceptions.InvalidCredentialsException;
+import com.revature.exceptions.PersistenceException;
 import com.revature.models.Role;
 import com.revature.models.User;
 import com.revature.repositories.UserRepository;
@@ -32,10 +35,10 @@ public class UserService {
      */
     public User authenticate(String username, String password){
         if (username == null || username.trim().equals("") || password == null || password.trim().equals("")){
-            throw new RuntimeException("Invalid credentials provided");
+            throw new InvalidCredentialsException("Invalid credentials provided");
         }
         return userRepo.getAUserByUsernameAndPassword(username,password)
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(PersistenceException::new);
     }
 
     /**
@@ -45,15 +48,15 @@ public class UserService {
     // TODO: encrypt all user passwords before persisting to data source
     public void register(User newUser) {
         if (!isUserValid(newUser)) {
-            throw new RuntimeException("Invalid user field values provided during registration!");
+            throw new InvalidCredentialsException("Invalid user field values provided during registration!");
         }
         Optional<User> existingUser = userRepo.getAUserByUsername(newUser.getUsername());
         if (existingUser.isPresent()) {
-            throw new RuntimeException("Username is already in use");
+            throw new InvalidCredentialsException("Username is already in use");
         }
         Optional<User> existingUserEmail = userRepo.getAUserByEmail(newUser.getEmail());
         if (existingUserEmail.isPresent()) {
-            throw new RuntimeException("Email is already in use");
+            throw new InvalidCredentialsException("Email is already in use");
         }
         newUser.setUserRole(Role.EMPLOYEE.ordinal() + 1);
         userRepo.addUser(newUser);
@@ -65,10 +68,10 @@ public class UserService {
      */
     public void update(User newUser) {
         if (!isUserValid(newUser)) {
-            throw new RuntimeException("Invalid user field values provided during registration!");
+            throw new InvalidColumnException("Invalid user field values provided during registration!");
         }
         if (!userRepo.updateAUser(newUser)){
-            throw new RuntimeException("There was a problem trying to update the user");
+            throw new PersistenceException("There was a problem trying to update the user");
         }
     }
 
