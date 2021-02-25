@@ -6,6 +6,8 @@ import com.revature.models.ReimbursementStatus;
 import com.revature.models.ReimbursementType;
 import com.revature.repositories.ReimbursementsRepository;
 
+import org.hibernate.boot.model.naming.IllegalIdentifierException;
+
 import java.util.List;
 
 /**
@@ -20,9 +22,7 @@ public class ReimbursementService {
      */
     public List<Reimbursement> getAllReimb(){
         List<Reimbursement> reimbursements = reimbRepo.getAllReimbursements();
-        if (reimbursements.isEmpty()){
-            throw new RuntimeException();
-        }
+        
         return reimbursements;
     }
 
@@ -33,12 +33,9 @@ public class ReimbursementService {
      */
     public List<Reimbursement> getReimbByUserId(Integer userId){
         if (userId <= 0){
-            throw new RuntimeException("THE PROVIDED USER ID CANNOT BE LESS THAN OR EQUAL TO ZERO");
+            throw new IllegalIdentifierException("THE PROVIDED USER ID CANNOT BE LESS THAN OR EQUAL TO ZERO");
         }
         List<Reimbursement> reimb = reimbRepo.getAllReimbSetByAuthorId(userId);
-        if (reimb.isEmpty()){
-            throw new RuntimeException();
-        }
         return reimb;
     }
 
@@ -52,9 +49,7 @@ public class ReimbursementService {
             throw new RuntimeException("THE PROVIDED USER ID CANNOT BE LESS THAN OR EQUAL TO ZERO");
         }
         List<Reimbursement> reimb = reimbRepo.getAllReimbSetByType(ReimbursementType.getByNumber(typeId));
-        if (reimb.isEmpty()){
-            throw new RuntimeException();
-        }
+        
         return reimb;
     }
 
@@ -68,9 +63,7 @@ public class ReimbursementService {
             throw new RuntimeException("THE PROVIDED USER ID CANNOT BE LESS THAN OR EQUAL TO ZERO");
         }
         List<Reimbursement> reimb = reimbRepo.getAllReimbSetByStatus(ReimbursementStatus.getByNumber(statusId));
-        if (reimb.isEmpty()){
-            throw new RuntimeException();
-        }
+        
         return reimb;
     }
 
@@ -109,7 +102,7 @@ public class ReimbursementService {
      */
     public void approve(Integer resolverId, Integer reimbId) {
         if (reimbId <= 0 || resolverId <=0){
-            throw new RuntimeException("Invalid user field values provided!");
+            throw new IllegalIdentifierException("Invalid user field values provided!");
         }
         if(!reimbRepo.updateFIN(resolverId, 2, reimbId)){
             throw new RuntimeException("Something went wrong trying to approve this reimbursement");
@@ -123,7 +116,7 @@ public class ReimbursementService {
      */
     public void deny(Integer resolverId, Integer reimbId) {
         if (reimbId <= 0){
-            throw new RuntimeException("Invalid user field values provided!");
+            throw new IllegalIdentifierException("Invalid user field values provided!");
         }
         if(!reimbRepo.updateFIN(resolverId, 3, reimbId)){
             throw new RuntimeException("Something went wrong trying to deny this reimbursement");

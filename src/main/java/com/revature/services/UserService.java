@@ -19,9 +19,6 @@ public class UserService {
      */
     public List<User> getAllUsers(){
         List<User> users = userRepo.getAllusers();
-        if (users.isEmpty()){
-            throw new RuntimeException();
-        }
         return users;
     }
 
@@ -80,7 +77,7 @@ public class UserService {
      */
     public boolean deleteUserById(int id) {
         if (id <= 0){
-            throw new RuntimeException("THE PROVIDED ID CANNOT BE LESS THAN OR EQUAL TO ZERO");
+            throw new IllegalIdentifierException("THE PROVIDED ID CANNOT BE LESS THAN OR EQUAL TO ZERO");
         }
         return userRepo.deleteAUserById(id);
     }
