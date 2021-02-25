@@ -1,22 +1,60 @@
 package com.revature.models;
 
-import java.io.File;
+import org.hibernate.annotations.*;
+
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import com.revature.util.ReimbursementTypeConverter;
+import com.revature.util.StatusCodeConverter;
+
 import java.sql.Timestamp;
 import java.util.Objects;
 
 /**
  * The base unit of the ERS system. ready to include images
  */
+@Entity
+@DynamicInsert
+@Table(name = "reimbursements", schema = "p1_5")
 public class Reimbursement {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", columnDefinition = "serial NOT NULL")
     private Integer id;
+
+    @Column(name = "amount", columnDefinition = "numeric(6,2) NOT NULL")
     private Double amount;
+
+    @Generated(value = GenerationTime.INSERT)
+    @ColumnDefault(value = "CURRENT_TIMESTAMP")
+    @Column(name = "submitted",columnDefinition = "timestamp NOT NULL")
     private Timestamp submitted;
+
+    @ColumnDefault(value = "NULL")
+    @Column(name = "resolved", columnDefinition = "timestamp NULL")
     private Timestamp resolved;
+
+    @ColumnDefault(value = "NULL")
+    @Column(name = "description", columnDefinition = "varchar(1000) NULL")
     private String description;
-    private File receipt;
+
+    @Type(type="org.hibernate.type.BinaryType")
+    @Column(name = "receipt", columnDefinition = "bytea")
+    private byte[] receipt;
+
+    @Column(name = "author_id", columnDefinition = "int4 NOT NULL")
     private int authorId;
-    private int resolverId;
+
+    @Column(name = "resolver_id", columnDefinition = "int4 NULL")
+    private Integer resolverId;
+
+    @Column(name = "reimbursement_status_id", columnDefinition = "int4 NOT NULL")
+    @Convert(converter = StatusCodeConverter.class)
     private ReimbursementStatus reimbursementStatus;
+
+    @Column(name = "reimbursement_type_id", columnDefinition = "int4 NOT NULL")
+    @Convert(converter = ReimbursementTypeConverter.class)
     private ReimbursementType reimbursementType;
 
     public Reimbursement() {
@@ -56,11 +94,11 @@ public class Reimbursement {
         this.reimbursementType = reimbursementType;
     }
 
-    public File getReceipt() {
+    public byte[] getReceipt() {
         return receipt;
     }
 
-    public void setReceipt(File receipt) {
+    public void setReceipt(byte[] receipt) {
         this.receipt = receipt;
     }
 
