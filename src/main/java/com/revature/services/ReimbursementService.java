@@ -10,6 +10,8 @@ import com.revature.models.ReimbursementType;
 import com.revature.repositories.ReimbursementsRepository;
 import com.revature.util.StatusCodeConverter;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.boot.model.naming.IllegalIdentifierException;
 
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.List;
  * Service layer for validating reimbursements before sending to or from the Database
  */
 public class ReimbursementService {
+    private static final Logger logger = LogManager.getLogger(ReimbursementService.class);
     private ReimbursementsRepository reimbRepo = new ReimbursementsRepository();
 
     /**
