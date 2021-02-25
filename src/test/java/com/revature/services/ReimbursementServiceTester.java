@@ -36,7 +36,7 @@ public class ReimbursementServiceTester {
     static List<Reimbursement> nonEmptyReimbursements;
     
     @InjectMocks
-    ReimbursementService service = new ReimbursementService();
+    ReimbursementService service = ReimbursementService.getInstance();
 
     @Mock
     ReimbursementsRepository repo;
