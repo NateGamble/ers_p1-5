@@ -52,6 +52,8 @@ public class UserService {
             throw new InvalidCredentialsException("Invalid credentials provided");
         }
         password = passHash(password);
+
+        logger.info("Authentication successful!");
         return userRepo.getAUserByUsernameAndPassword(username,password)
                 .orElseThrow(PersistenceException::new);
     }
@@ -61,7 +63,7 @@ public class UserService {
      * @param newUser completed user object
      */
     public void register(User newUser) {
-        logger.info("Registering new user: " + newUser.toString());
+        logger.info("Registering new user:\n\t " + newUser.toString());
         if (!isUserValid(newUser)) {
             logger.error("Invalid user field values provided during registration!");
             throw new InvalidCredentialsException("Invalid user field values provided during registration!");
@@ -76,6 +78,8 @@ public class UserService {
             logger.error("Email is already in use");
             throw new InvalidCredentialsException("Email is already in use");
         }
+
+        logger.info("User saved!");
         newUser.setUserRole(Role.EMPLOYEE.ordinal() + 1);
         setUserPassHash(newUser);
         userRepo.addUser(newUser);
@@ -86,7 +90,7 @@ public class UserService {
      * @param newUser user to update
      */
     public void update(User newUser) {
-        logger.info("Updating user in database: " + newUser.toString());
+        logger.info("Updating user in database:\n\t" + newUser.toString());
         if (!isUserValid(newUser)) {
             logger.error("Invalid user field values provided during registration!");
             throw new InvalidColumnException("Invalid user field values provided during registration!");
@@ -104,6 +108,8 @@ public class UserService {
                 throw new PersistenceException("There was a problem trying to update the user");
             }
         }
+
+        logger.info("Update succesful!");
     }
 
     /**
@@ -117,6 +123,8 @@ public class UserService {
             logger.error("The provided ID cannot be less than or equal to 0.");
             throw new IllegalIdentifierException("The provided ID cannot be less than or equal to 0.");
         }
+
+        logger.info("Deletion successful!");
         return userRepo.deleteAUserById(id);
     }
 
@@ -182,6 +190,7 @@ public class UserService {
             //Gets completed Hash password in hex format.
             user.setPassword(sb.toString());
         } catch (NoSuchAlgorithmException e) {
+            logger.error("Something went wrong with the password hashing algorithm.");
             e.printStackTrace();
         }
     }
@@ -192,7 +201,7 @@ public class UserService {
      * https://howtodoinjava.com/java/java-security/how-to-generate-secure-password-hash-md5-sha-pbkdf2-bcrypt-examples/
     */
     public String passHash(String pass) {
-        logger.info("Hashing password for given password: " + pass.toString());
+        logger.info("Hashing password for a given password.");
         try {
             // MessageDigest used to "Digest" the password and output Hash.
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -209,7 +218,8 @@ public class UserService {
             //Gets completed Hash password in hex format.
             return sb.toString();
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            logger.error("Something went wrong with the password hashing algorithm.");
+            logger.error(e.getStackTrace());
         }
         return null;
     }

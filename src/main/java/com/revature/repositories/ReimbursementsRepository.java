@@ -7,6 +7,9 @@ import com.revature.models.User;
 
 import static com.revature.util.AppState.app;
 
+import com.revature.services.ReimbursementService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -19,6 +22,8 @@ import java.util.*;
  * A class to interact with the database to CRUD reimbursement objects
  */
 public class ReimbursementsRepository {
+    private static final Logger logger = LogManager.getLogger(ReimbursementService.class);
+
 
     public ReimbursementsRepository(){
         super();
@@ -34,6 +39,7 @@ public class ReimbursementsRepository {
     public boolean addReimbursement(Reimbursement reimbursement) {
         Transaction tx = null;
         Session session = app.getFactory().openSession();
+        logger.info("Preparing to add Reimbursement to database...");
 
         try {
             tx = session.beginTransaction();
@@ -42,11 +48,14 @@ public class ReimbursementsRepository {
             tx.commit();
 
         } catch (HibernateException e) {
+            logger.error("Problem with adding Reimbursement to database: " + reimbursement.toString());
             if (tx!= null) tx.rollback();
             e.printStackTrace();
         } finally {
             session.close();
         }
+
+        logger.info("Addition succesful.");
         return reimbursement.getId() != null;
     }
 
@@ -57,6 +66,8 @@ public class ReimbursementsRepository {
         List<Reimbursement> reimbursements = null;
         Transaction tx = null;
         Session session = app.getFactory().openSession();
+
+
 
         try {
             tx = session.beginTransaction();
