@@ -28,6 +28,7 @@ public class ReimbursementService {
      * @return A list of Reimbursement objects
      */
     public List<Reimbursement> getAllReimb(){
+        logger.info("getting all reimbursement items from the database");
         List<Reimbursement> reimbursements = reimbRepo.getAllReimbursements();
         
         return reimbursements;
@@ -40,6 +41,7 @@ public class ReimbursementService {
      */
     public List<Reimbursement> getReimbByUserId(Integer userId){
         if (userId <= 0){
+            logger.error("THE PROVIDED USER ID CANNOT BE LESS THAN OR EQUAL TO ZERO");
             throw new IllegalIdentifierException("THE PROVIDED USER ID CANNOT BE LESS THAN OR EQUAL TO ZERO");
         }
         List<Reimbursement> reimb = reimbRepo.getAllReimbSetByAuthorId(userId);
