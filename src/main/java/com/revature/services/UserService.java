@@ -4,6 +4,8 @@ import com.revature.models.Role;
 import com.revature.models.User;
 import com.revature.repositories.UserRepository;
 
+import org.hibernate.boot.model.naming.IllegalIdentifierException;
+
 import java.util.List;
 import java.util.Optional;
 
