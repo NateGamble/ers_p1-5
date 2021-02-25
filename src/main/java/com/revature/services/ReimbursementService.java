@@ -135,7 +135,7 @@ public class ReimbursementService {
         if (reimb == null) return false;
         if (reimb.getAmount() == null || reimb.getAmount() <= 0 ) return false;
         if (reimb.getDescription() == null || reimb.getDescription().trim().equals("")) return false;
-        if (reimb.getAuthorId() <= 0 ) return false;
+        if (reimb.getAuthor().getUserId() <= 0 ) return false;
         if (reimb.getReimbursementType() == null ) return false;
         return true;
     }
