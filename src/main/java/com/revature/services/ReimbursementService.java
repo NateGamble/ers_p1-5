@@ -19,6 +19,15 @@ import java.util.List;
  */
 public class ReimbursementService {
     private ReimbursementsRepository reimbRepo = new ReimbursementsRepository();
+    private static final ReimbursementService service = new ReimbursementService();
+
+    private ReimbursementService() {
+        super();
+    }
+
+    public static ReimbursementService getInstance() {
+        return service;
+    }
 
     /**
      * Gets all Reimbursements from the DataBase
