@@ -3,6 +3,7 @@ package com.revature.repositories;
 import com.revature.models.Reimbursement;
 import com.revature.models.ReimbursementStatus;
 import com.revature.models.ReimbursementType;
+import com.revature.models.User;
 
 import static com.revature.util.AppState.app;
 
@@ -378,7 +379,7 @@ public class ReimbursementsRepository {
         try {
             tx = session.beginTransaction();
             reimbursement = (Reimbursement) session.get(Reimbursement.class, reimbId);
-            reimbursement.setResolverId(resolverId);
+            reimbursement.setResolver(session.get(User.class, resolverId));
             reimbursement.setReimbursementStatus(ReimbursementStatus.getByNumber(statusId));
             session.save(reimbursement);
             tx.commit();
@@ -437,7 +438,7 @@ public class ReimbursementsRepository {
         try {
             tx = session.beginTransaction();
             reimbursement = (Reimbursement) session.get(Reimbursement.class, reimbId);
-            reimbursement.setResolverId(resolverId);
+            reimbursement.setResolver(session.get(User.class, resolverId));
             session.save(reimbursement);
             tx.commit();
             updated = true;

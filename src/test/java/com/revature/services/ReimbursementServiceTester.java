@@ -7,7 +7,6 @@ import com.revature.models.ReimbursementStatus;
 import com.revature.models.ReimbursementType;
 import com.revature.models.User;
 import com.revature.repositories.ReimbursementsRepository;
-import com.revature.repositories.UserRepository;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
