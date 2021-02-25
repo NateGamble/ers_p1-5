@@ -1,7 +1,13 @@
 package com.revature.models;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+
 public enum ReimbursementStatus {
     // values declared within enums are constants and are comma separated
+    // DONTUSE("Don't use please"),
     PENDING("Pending"),
     APPROVED("Approved"),
     DENIED("Denied"),
@@ -48,5 +54,7 @@ public enum ReimbursementStatus {
     public String toString() {
         return reimbursementStaus;
     }
+
+
 
 }

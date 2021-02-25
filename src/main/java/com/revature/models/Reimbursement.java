@@ -1,66 +1,106 @@
 package com.revature.models;
 
-import java.io.File;
+import org.hibernate.annotations.*;
+
+import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+import com.revature.util.ReimbursementTypeConverter;
+import com.revature.util.StatusCodeConverter;
+
 import java.sql.Timestamp;
 import java.util.Objects;
 
 /**
  * The base unit of the ERS system. ready to include images
  */
+@Entity
+@DynamicInsert
+@Table(name = "reimbursements", schema = "p1_5")
 public class Reimbursement {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", columnDefinition = "serial NOT NULL")
     private Integer id;
+
+    @Column(name = "amount", columnDefinition = "numeric(6,2) NOT NULL")
     private Double amount;
+
+    @Generated(value = GenerationTime.INSERT)
+    @ColumnDefault(value = "CURRENT_TIMESTAMP")
+    @Column(name = "submitted",columnDefinition = "timestamp NOT NULL")
     private Timestamp submitted;
+
+    @ColumnDefault(value = "NULL")
+    @Column(name = "resolved", columnDefinition = "timestamp NULL")
     private Timestamp resolved;
+
+    @ColumnDefault(value = "NULL")
+    @Column(name = "description", columnDefinition = "varchar(1000) NULL")
     private String description;
-    private File receipt;
-    private int authorId;
-    private int resolverId;
+
+    @Type(type="org.hibernate.type.BinaryType")
+    @Column(name = "receipt", columnDefinition = "bytea")
+    private byte[] receipt;
+
+    @ManyToOne(targetEntity = User.class, optional = false)
+    @JoinColumn(name = "author_id", columnDefinition = "int4 NOT NULL")
+    private User author;
+
+    @ManyToOne(targetEntity = User.class)
+    @JoinColumn(name = "resolver_id", columnDefinition = "int4 NULL")
+    private User resolver;
+
+    @Column(name = "reimbursement_status_id", columnDefinition = "int4 NOT NULL")
+    @Convert(converter = StatusCodeConverter.class)
     private ReimbursementStatus reimbursementStatus;
+
+    @Column(name = "reimbursement_type_id", columnDefinition = "int4 NOT NULL")
+    @Convert(converter = ReimbursementTypeConverter.class)
     private ReimbursementType reimbursementType;
 
     public Reimbursement() {
         super();
     }
 
-    public Reimbursement(Double amount, String description, int authorId,
+    public Reimbursement(Double amount, String description, User author,
                          ReimbursementStatus reimbursementStatus, ReimbursementType reimbursementType) {
         this.amount = amount;
         this.description = description;
-        this.authorId = authorId;
+        this.author = author;
         this.reimbursementStatus = reimbursementStatus;
         this.reimbursementType = reimbursementType;
     }
 
-    public Reimbursement(Integer id, Double amount, String description, int authorId,
+    public Reimbursement(Integer id, Double amount, String description, User author,
                          ReimbursementStatus reimbursementStatus, ReimbursementType reimbursementType) {
         this.id = id;
         this.amount = amount;
         this.description = description;
-        this.authorId = authorId;
+        this.author = author;
         this.reimbursementStatus = reimbursementStatus;
         this.reimbursementType = reimbursementType;
     }
 
     public Reimbursement(Integer id, Double amount, Timestamp submitted,
-                         Timestamp resolved, String description, int authorId, int resolverId,
+                         Timestamp resolved, String description, User author, User resolver,
                          ReimbursementStatus reimbursementStatus, ReimbursementType reimbursementType) {
         this.id = id;
         this.amount = amount;
         this.submitted = submitted;
         this.resolved = resolved;
         this.description = description;
-        this.authorId = authorId;
-        this.resolverId = resolverId;
+        this.author = author;
+        this.resolver = resolver;
         this.reimbursementStatus = reimbursementStatus;
         this.reimbursementType = reimbursementType;
     }
 
-    public File getReceipt() {
+    public byte[] getReceipt() {
         return receipt;
     }
 
-    public void setReceipt(File receipt) {
+    public void setReceipt(byte[] receipt) {
         this.receipt = receipt;
     }
 
@@ -103,22 +143,7 @@ public class Reimbursement {
     public void setDescription(String description) {
         this.description = description;
     }
-
-    public int getAuthorId() {
-        return authorId;
-    }
-
-    public void setAuthorId(int authorId) {
-        this.authorId = authorId;
-    }
-
-    public int getResolverId() {
-        return resolverId;
-    }
-
-    public void setResolverId(int resolverId) {
-        this.resolverId = resolverId;
-    }
+    
 
     public ReimbursementStatus getReimbursementStatus() {
         return reimbursementStatus;
@@ -126,6 +151,22 @@ public class Reimbursement {
 
     public void setReimbursementStatus(ReimbursementStatus reimbursementStatus) {
         this.reimbursementStatus = reimbursementStatus;
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
+    }
+
+    public User getResolver() {
+        return resolver;
+    }
+
+    public void setResolver(User resolver) {
+        this.resolver = resolver;
     }
 
     public ReimbursementType getReimbursementType() {
@@ -141,8 +182,8 @@ public class Reimbursement {
         if (this == o) return true;
         if (!(o instanceof Reimbursement)) return false;
         Reimbursement that = (Reimbursement) o;
-        return authorId == that.authorId &&
-                resolverId == that.resolverId &&
+        return author == that.author &&
+                resolver == that.resolver &&
                 Objects.equals(id, that.id) &&
                 Objects.equals(amount, that.amount) &&
                 Objects.equals(submitted, that.submitted) &&
@@ -154,7 +195,7 @@ public class Reimbursement {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, amount, submitted, resolved, description, authorId, resolverId, reimbursementStatus, reimbursementType);
+        return Objects.hash(id, amount, submitted, resolved, description, author, resolver, reimbursementStatus, reimbursementType);
     }
 
     @Override
@@ -165,8 +206,8 @@ public class Reimbursement {
                 ", submitted=" + submitted +
                 ", resolved=" + resolved +
                 ", description='" + description + '\'' +
-                ", authorId=" + authorId +
-                ", resolverId=" + resolverId +
+                ", authorId=" + author +
+                ", resolverId=" + resolver +
                 ", reimbursementStatus=" + reimbursementStatus +
                 ", reimbursementType=" + reimbursementType +
                 '}';
