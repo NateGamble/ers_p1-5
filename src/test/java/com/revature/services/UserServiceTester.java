@@ -256,6 +256,18 @@ public class UserServiceTester {
         Assert.assertEquals(validity,true);
     }
 
+    @Test
+    public void test_isEmailAvailable_unavailable(){
+        //Arrange
+        when(userRepository.getAUserByEmail(testUser.getEmail())).thenReturn(Optional.of(testUser));
+
+        //Act
+        boolean validity = userService.isEmailAvailable(testUser.getEmail());
+
+        //Assert
+        Assert.assertEquals(validity,false);
+    }
+
 
 
 }
