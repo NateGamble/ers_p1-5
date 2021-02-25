@@ -7,6 +7,8 @@ import com.revature.models.Role;
 import com.revature.models.User;
 import com.revature.repositories.UserRepository;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.boot.model.naming.IllegalIdentifierException;
 
 import java.security.MessageDigest;
@@ -15,11 +17,13 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Optional;
 
+
 /**
  * Constitutes the SERVICE LAYER for users. concerned with validating all user
  * input before being sent to the database.
  */
 public class UserService {
+    private static final Logger logger = LogManager.getLogger(UserService.class);
     private UserRepository userRepo = new UserRepository();
 
     Hashtable<Integer, String>
@@ -30,6 +34,7 @@ public class UserService {
      * @return A list of Users
      */
     public List<User> getAllUsers(){
+        logger.info("Getting all User objects from database.");
         List<User> users = userRepo.getAllusers();
         return users;
     }
@@ -41,7 +46,9 @@ public class UserService {
      * @return the object of the requested user
      */
     public User authenticate(String username, String password){
+        logger.info("Authenticating User in database.");
         if (username == null || username.trim().equals("") || password == null || password.trim().equals("")){
+            logger.error("Invalid credentials provided.");
             throw new InvalidCredentialsException("Invalid credentials provided");
         }
         password = passHash(password);
@@ -53,17 +60,20 @@ public class UserService {
      * Register a new user in the DB. validates all fields first
      * @param newUser completed user object
      */
-    // TODO: encrypt all user passwords before persisting to data source
     public void register(User newUser) {
+        logger.info("Registering new user: " + newUser.toString());
         if (!isUserValid(newUser)) {
+            logger.error("Invalid user field values provided during registration!");
             throw new InvalidCredentialsException("Invalid user field values provided during registration!");
         }
         Optional<User> existingUser = userRepo.getAUserByUsername(newUser.getUsername());
         if (existingUser.isPresent()) {
+            logger.error("Username is already in use");
             throw new InvalidCredentialsException("Username is already in use");
         }
         Optional<User> existingUserEmail = userRepo.getAUserByEmail(newUser.getEmail());
         if (existingUserEmail.isPresent()) {
+            logger.error("Email is already in use");
             throw new InvalidCredentialsException("Email is already in use");
         }
         newUser.setUserRole(Role.EMPLOYEE.ordinal() + 1);
@@ -76,22 +86,25 @@ public class UserService {
      * @param newUser user to update
      */
     public void update(User newUser) {
+        logger.info("Updating user in database: " + newUser.toString());
         if (!isUserValid(newUser)) {
+            logger.error("Invalid user field values provided during registration!");
             throw new InvalidColumnException("Invalid user field values provided during registration!");
         }
         if (userRepo.getAUserById(newUser.getUserId()).orElseThrow(PersistenceException::new).getPassword()
         == newUser.getPassword()){
             if (!userRepo.updateAUser(newUser)){
+                logger.error("There was a problem trying to update the user");
                 throw new PersistenceException("There was a problem trying to update the user");
             }
         } else {
             setUserPassHash(newUser);
             if (!userRepo.updateAUser(newUser)){
+                logger.error("There was a problem trying to update the user");
                 throw new PersistenceException("There was a problem trying to update the user");
             }
         }
     }
-
 
     /**
      * Deletes a user by changing their role to 4
@@ -99,8 +112,10 @@ public class UserService {
      * @return true if role was updated in db
      */
     public boolean deleteUserById(int id) {
+        logger.info("Deleting User object from database with id: " + id);
         if (id <= 0){
-            throw new IllegalIdentifierException("THE PROVIDED ID CANNOT BE LESS THAN OR EQUAL TO ZERO");
+            logger.error("The provided ID cannot be less than or equal to 0.");
+            throw new IllegalIdentifierException("The provided ID cannot be less than or equal to 0.");
         }
         return userRepo.deleteAUserById(id);
     }
@@ -111,6 +126,7 @@ public class UserService {
      * @return true if available
      */
     public boolean isUsernameAvailable(String username) {
+        logger.info("Checking Username Availability in database.");
         User user = userRepo.getAUserByUsername(username).orElse(null);
         return user == null;
     }
@@ -121,6 +137,7 @@ public class UserService {
      * @return true if available
      */
     public boolean isEmailAvailable(String email) {
+        logger.info("Checking Username Availability in database.");
         User user = userRepo.getAUserByEmail(email).orElse(null);
         return user == null;
     }
@@ -147,6 +164,7 @@ public class UserService {
      * https://howtodoinjava.com/java/java-security/how-to-generate-secure-password-hash-md5-sha-pbkdf2-bcrypt-examples/
      */
     public void setUserPassHash(User user) {
+        logger.info("Hashing password for given user: " + user.toString());
         String pass = user.getPassword();
         try {
             // MessageDigest used to "Digest" the password and output Hash.
@@ -174,6 +192,7 @@ public class UserService {
      * https://howtodoinjava.com/java/java-security/how-to-generate-secure-password-hash-md5-sha-pbkdf2-bcrypt-examples/
     */
     public String passHash(String pass) {
+        logger.info("Hashing password for given password: " + pass.toString());
         try {
             // MessageDigest used to "Digest" the password and output Hash.
             MessageDigest md = MessageDigest.getInstance("MD5");
