@@ -158,6 +158,33 @@ public class UserRepository {
         return user;
     }
 
+    /**
+     * A method to get a single user by a given Id
+     * @param id the user's id
+     * @return Optional object which may or may not contain a User.
+     * @throws
+     */
+    public Optional<User> getAUserById(int id) {
+        Optional<User> user = Optional.empty();
+        Transaction tx = null;
+        Session session = app.getFactory().openSession();
+
+        try {
+            tx = session.beginTransaction();
+            user = session.createQuery("FROM User u where u.id = :id")
+                    .setParameter("id", id).stream().findFirst();
+
+            tx.commit();
+
+        } catch (HibernateException e) {
+            if (tx!= null) tx.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return user;
+    }
+
     //---------------------------------- UPDATE -------------------------------------------- //
 
     /**
