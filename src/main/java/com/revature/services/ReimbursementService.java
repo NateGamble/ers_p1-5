@@ -28,7 +28,7 @@ public class ReimbursementService {
      * @return A list of Reimbursement objects
      */
     public List<Reimbursement> getAllReimb(){
-        logger.info("getting all reimbursement items from the database");
+        logger.info("getting all reimbursements items from the database");
         List<Reimbursement> reimbursements = reimbRepo.getAllReimbursements();
         
         return reimbursements;
@@ -40,8 +40,9 @@ public class ReimbursementService {
      * @return A list of Reimbursement objects
      */
     public List<Reimbursement> getReimbByUserId(Integer userId){
+        logger.info("Getting reimbursements by user id: " + userId);
         if (userId <= 0){
-            logger.error("THE PROVIDED USER ID CANNOT BE LESS THAN OR EQUAL TO ZERO");
+            logger.error("The provided user id can't be <= 0");
             throw new IllegalIdentifierException("THE PROVIDED USER ID CANNOT BE LESS THAN OR EQUAL TO ZERO");
         }
         List<Reimbursement> reimb = reimbRepo.getAllReimbSetByAuthorId(userId);
@@ -54,8 +55,10 @@ public class ReimbursementService {
      * @return A list of Reimbursement objects
      */
     public List<Reimbursement> getReimbByType(Integer typeId){
+        logger.info("Getting reimbursement by type: " + ReimbursementType.getByNumber(typeId));
         if (typeId <= 0 || typeId >=5){
-            throw new EnumOutOfBoundsException("THE PROVIDED USER ID CANNOT BE LESS THAN OR EQUAL TO ZERO");
+            logger.error("Provided enum id is out of bounds");
+            throw new EnumOutOfBoundsException("The provided type id must be between 1 and 4 inclusive");
         }
         List<Reimbursement> reimb = reimbRepo.getAllReimbSetByType(ReimbursementType.getByNumber(typeId));
         
@@ -68,6 +71,7 @@ public class ReimbursementService {
      * @return A list of Reimbursement objects
      */
     public List<Reimbursement> getReimbByType(ReimbursementType type){
+        logger.info("Getting reimbursements by type: " + type);
         List<Reimbursement> reimb = reimbRepo.getAllReimbSetByType(type);
         
         return reimb;
@@ -79,8 +83,10 @@ public class ReimbursementService {
      * @return A list of Reimbursement objects
      */
     public List<Reimbursement> getReimbByStatus(Integer statusId){
-        if (statusId <= 0 || statusId >= 4){
-            throw new EnumOutOfBoundsException("THE PROVIDED USER ID CANNOT BE LESS THAN OR EQUAL TO ZERO");
+        logger.info("Getting reimbursements by status: " + ReimbursementStatus.getByNumber(statusId));
+        if (statusId <= 0 || statusId >= 5){
+            logger.error("Provided enum id is out of bounds");
+            throw new EnumOutOfBoundsException("The provided status id must be between 1 and 4 inclusive");
         }
         List<Reimbursement> reimb = reimbRepo.getAllReimbSetByStatus(ReimbursementStatus.getByNumber(statusId));
         
@@ -93,6 +99,7 @@ public class ReimbursementService {
      * @return A list of Reimbursement objects
      */
     public List<Reimbursement> getReimbByStatus(ReimbursementStatus status){
+        logger.info("Getting reimbursements by status: " + status);
         List<Reimbursement> reimb = reimbRepo.getAllReimbSetByStatus(status);
         
         return reimb;
@@ -103,13 +110,16 @@ public class ReimbursementService {
      * @param reimb the completed reimbursement object
      */
     public void save(Reimbursement reimb){
+        logger.info("Attempting to save reimbursement:\n\t" + reimb);
         if (!isReimbursementValid(reimb)){
-            throw new InvalidColumnException("Invalid user field values provided!");
+            logger.error("Provided reimbursement is invalid");
+            throw new InvalidColumnException("Invalid reimbursement field values provided!");
         }
         if(!reimbRepo.addReimbursement(reimb)){
+            logger.error("Provided reimbursement was not saved to database");
             throw new PersistenceException("Something went wrong trying to save this reimbursement");
         }
-        // System.out.println(reimb);
+        logger.info("Reimbursement saved!");
     }
 
     /**
@@ -117,13 +127,16 @@ public class ReimbursementService {
      * @param reimb the completed reimbursement object
      */
     public void updateEMP(Reimbursement reimb) {
+        logger.info("Attempting to update reimbursement:\n\t" + reimb);
         if (!isReimbursementValid(reimb)){
-            throw new InvalidColumnException("Invalid user field values provided!");
+            logger.error("Provided reimbursement is invalid");
+            throw new InvalidColumnException("Invalid reimbursement field values provided!");
         }
         if(!reimbRepo.updateEMP(reimb)){
+            logger.error("Provided reimbursement was not updated in the database");
             throw new PersistenceException("Something went wrong trying to save this reimbursement");
         }
-        // System.out.println(reimb);
+        logger.info("Reimbursement updated!");
     }
 
     /**
@@ -132,11 +145,15 @@ public class ReimbursementService {
      * @param reimbId id of the Reimb. to approve or disapprove.
      */
     public void approve(Integer resolverId, Integer reimbId) {
+        logger.info("Attempting to approve reimbursement with id: " + reimbId +
+                    " and resolver id: " + resolverId);
         if (reimbId <= 0 || resolverId <=0){
-            throw new IllegalIdentifierException("Invalid user field values provided!");
+            logger.error("Invalid reimbursement id or resolver id provided");
+            throw new IllegalIdentifierException("Invalid reimbursement id or resolver id provided!");
         }
         int statusCode = new StatusCodeConverter().convertToDatabaseColumn(ReimbursementStatus.APPROVED);
         if(!reimbRepo.updateFIN(resolverId, statusCode, reimbId)) {
+            logger.error("Reimbursement was not updated in the database");
             throw new PersistenceException("Something went wrong trying to approve this reimbursement");
         }
     }
@@ -147,11 +164,15 @@ public class ReimbursementService {
      * @param reimbId id of the Reimb. to approve or disapprove.
      */
     public void deny(Integer resolverId, Integer reimbId) {
-        if (reimbId <= 0){
-            throw new IllegalIdentifierException("Invalid user field values provided!");
+        logger.info("Attempting to deny reimbursement with id: " + reimbId +
+                    " and resolver id: " + resolverId);
+        if (reimbId <= 0 || resolverId <=0){
+            logger.error("Invalid reimbursement id or resolver id provided");
+            throw new IllegalIdentifierException("Invalid reimbursement id or resolver id provided!");
         }
         int statusCode = new StatusCodeConverter().convertToDatabaseColumn(ReimbursementStatus.DENIED);
         if(!reimbRepo.updateFIN(resolverId, statusCode, reimbId)){
+            logger.error("Reimbursement was not updated in the database");
             throw new PersistenceException("Something went wrong trying to deny this reimbursement");
         }
     }

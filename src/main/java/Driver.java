@@ -33,8 +33,6 @@ public class Driver {
             System.err.println("This is an error because we didn't set something up right.");
             throw new ExceptionInInitializerError(ex);
         }
-        ReimbursementService service = new ReimbursementService();
-        service.getAllReimb();
 
 
 
