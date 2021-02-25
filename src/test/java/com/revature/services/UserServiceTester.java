@@ -21,18 +21,24 @@ import java.util.Optional;
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTester {
 
-    static User testUser = new User("TestUser", "TestPass", "Tester",
-            "McTesterson", "TestEmail@Gmail.com");
+
     static User fullTest = new User(1, "FullTester", "BetterPass", "Full",
             "Tester", "Bigger@Gmail.com", 1, true);
     static User emptyTester = new User();
     static List<User> users;
+    static User testUser;
 
     @InjectMocks
     UserService userService = new UserService();
 
     @Mock
     UserRepository userRepository;
+
+    @Before
+    public void userSetup() {
+        testUser = new User("TestUser", "TestPass", "Tester",
+                "McTesterson", "TestEmail@Gmail.com");
+    }
 
     @BeforeClass
     public static void testSetUp() {
@@ -100,7 +106,8 @@ public class UserServiceTester {
     @Test
     public void test_authenticate_valid(){
         //Arrange
-        when(userRepository.getAUserByUsernameAndPassword("TestUser","TestPass"))
+        userService.setUserPassHash(testUser);
+        when(userRepository.getAUserByUsernameAndPassword("TestUser",testUser.getPassword()))
                 .thenReturn(Optional.of(testUser));
 
         //Act
@@ -113,7 +120,7 @@ public class UserServiceTester {
     @Test(expected = PersistenceException.class)
     public void test_authenticate_invalid(){
         //Arrange
-        when(userRepository.getAUserByUsernameAndPassword("TestUser","TestPass"))
+        when(userRepository.getAUserByUsernameAndPassword("TestUser", userService.passHash("TestPass")))
                 .thenReturn(Optional.empty());
 
         //Act
@@ -169,6 +176,8 @@ public class UserServiceTester {
         //Arrange
         when(userRepository.updateAUser(testUser))
                 .thenReturn(false);
+        when(userRepository.getAUserById(testUser.getUserId()))
+                .thenReturn(Optional.of(testUser));
 
         //Act
         userService.update(testUser);
@@ -179,6 +188,8 @@ public class UserServiceTester {
         //Arrange
         when(userRepository.updateAUser(testUser))
                 .thenReturn(true);
+        when(userRepository.getAUserById(testUser.getUserId()))
+                .thenReturn(Optional.of(testUser));
 
         //Act
         userService.update(testUser);
@@ -268,6 +279,81 @@ public class UserServiceTester {
         Assert.assertEquals(validity,false);
     }
 
+    @Test
+    public void test_isHashingProperly(){
+        //Arrange
+        String testPass = testUser.getPassword();
+
+        //Act
+        testPass = userService.passHash(testPass);
+
+        //Assert
+        Assert.assertEquals(testPass, userService.passHash(testUser.getPassword()));
+    }
+
+    @Test
+    public void test_hashIsntOriginalPassword(){
+        //Arrange
+        String testPass = testUser.getPassword();
+
+        //Act
+        testPass = userService.passHash(testPass);
+
+        //Assert
+        Assert.assertNotEquals(testPass, testUser.getPassword());
+    }
+
+    @Test
+    public void test_isUserHashingProperly(){
+        //Arrange
+        User fakeUser = testUser;
+
+        //Act
+        userService.setUserPassHash(fakeUser);
+        userService.setUserPassHash(testUser);
+
+        //Assert
+        Assert.assertEquals(testUser, fakeUser);
+    }
+
+    @Test
+    public void test_hashUserIsntOriginalPassword(){
+        //Arrange
+        String fakePass = testUser.getPassword();
+
+        //Act
+        userService.setUserPassHash(testUser);
+
+        //Assert
+        Assert.assertNotEquals(testUser.getPassword(), fakePass);
+    }
+
+    @Test
+    public void test_checkHashChangesSame(){
+        //Arrange
+        User fakeUser = testUser;
+        String fakePass = testUser.getPassword();
+
+        //Act
+        userService.setUserPassHash(fakeUser);
+        fakePass = userService.passHash(fakePass);
+
+        //Assert
+        Assert.assertEquals(fakePass,fakeUser.getPassword());
+    }
+
+    @Test
+    public void test_updateDifferentPassword(){
+        //Arrange
+        when(userRepository.getAUserById(testUser.getUserId()))
+                .thenReturn(Optional.of(fullTest));
+        String testPass = userService.passHash(testUser.getPassword());
+        when(userRepository.updateAUser(testUser))
+                .thenReturn(true);
+
+        //Act
+        userService.update(testUser);
+    }
 
 
 }
