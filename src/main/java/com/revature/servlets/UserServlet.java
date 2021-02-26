@@ -45,6 +45,12 @@ public class UserServlet extends HttpServlet {
         // JWT check user isn't deleted
         JwtParser.checkToken(req);
         Principal p = (Principal) req.getAttribute("principal");
+        if (p == null) {
+            logger.warn("Unauthorized request made by unknown requester");
+            resp.setStatus(401);
+            writer.write(errResponseFactory.generateErrorResponse(HttpStatus.UNAUTHORIZED).toJSON());
+            return;
+        }
         User rqstr = userService.getUserByUsername(p.getUsername());
 
         String userIdParam = req.getParameter("userId");
@@ -86,7 +92,6 @@ public class UserServlet extends HttpServlet {
             logger.error(e.getMessage());
             resp.setStatus(500);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR).toJSON());
-            e.printStackTrace(writer);
         }
     }
 
@@ -100,6 +105,12 @@ public class UserServlet extends HttpServlet {
         // JWT check user isn't deleted
         JwtParser.checkToken(req);
         Principal p = (Principal) req.getAttribute("principal");
+        if (p == null) {
+            logger.warn("Unauthorized request made by unknown requester");
+            resp.setStatus(401);
+            writer.write(errResponseFactory.generateErrorResponse(HttpStatus.UNAUTHORIZED).toJSON());
+            return;
+        }
         User rqstr = userService.getUserByUsername(p.getUsername());
 
         String userIdParam = req.getParameter("userId");
@@ -143,7 +154,6 @@ public class UserServlet extends HttpServlet {
             logger.error(e.getMessage());
             resp.setStatus(500);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR).toJSON());
-            e.printStackTrace(writer);
         }
     }
 
@@ -156,6 +166,12 @@ public class UserServlet extends HttpServlet {
         // JWT check user isn't deleted
         JwtParser.checkToken(req);
         Principal p = (Principal) req.getAttribute("principal");
+        if (p == null) {
+            logger.warn("Unauthorized request made by unknown requester");
+            resp.setStatus(401);
+            writer.write(errResponseFactory.generateErrorResponse(HttpStatus.UNAUTHORIZED).toJSON());
+            return;
+        }
         User rqstr = userService.getUserByUsername(p.getUsername());
 
         try{
@@ -197,8 +213,6 @@ public class UserServlet extends HttpServlet {
             logger.error(e.getMessage());
             resp.setStatus(500);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR).toJSON());
-            e.printStackTrace(writer);
-
         }
     }
 
@@ -211,6 +225,12 @@ public class UserServlet extends HttpServlet {
         // JWT check user isn't deleted
         JwtParser.checkToken(req);
         Principal p = (Principal) req.getAttribute("principal");
+        if (p == null) {
+            logger.warn("Unauthorized request made by unknown requester");
+            resp.setStatus(401);
+            writer.write(errResponseFactory.generateErrorResponse(HttpStatus.UNAUTHORIZED).toJSON());
+            return;
+        }
         User rqstr = userService.getUserByUsername(p.getUsername());
 
         try{
@@ -251,7 +271,6 @@ public class UserServlet extends HttpServlet {
             logger.error(e.getMessage());
             resp.setStatus(500);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR).toJSON());
-            e.printStackTrace(writer);
         }
     }
     
