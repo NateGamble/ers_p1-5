@@ -7,6 +7,9 @@ import com.revature.models.User;
 
 import static com.revature.util.AppState.app;
 
+import com.revature.services.ReimbursementService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -19,6 +22,8 @@ import java.util.*;
  * A class to interact with the database to CRUD reimbursement objects
  */
 public class ReimbursementsRepository {
+    private static final Logger logger = LogManager.getLogger(ReimbursementService.class);
+
 
     public ReimbursementsRepository(){
         super();
@@ -34,6 +39,7 @@ public class ReimbursementsRepository {
     public boolean addReimbursement(Reimbursement reimbursement) {
         Transaction tx = null;
         Session session = app.getFactory().openSession();
+        logger.info("Add Reimbursement to database: \n\t" + reimbursement);
 
         try {
             tx = session.beginTransaction();
@@ -42,11 +48,13 @@ public class ReimbursementsRepository {
             tx.commit();
 
         } catch (HibernateException e) {
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
         } finally {
             session.close();
         }
+
         return reimbursement.getId() != null;
     }
 
@@ -57,6 +65,7 @@ public class ReimbursementsRepository {
         List<Reimbursement> reimbursements = null;
         Transaction tx = null;
         Session session = app.getFactory().openSession();
+        logger.info("Getting all Reimbursements from database.");
 
         try {
             tx = session.beginTransaction();
@@ -64,10 +73,12 @@ public class ReimbursementsRepository {
 
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }
+
         return reimbursements;
     }
 
@@ -76,6 +87,7 @@ public class ReimbursementsRepository {
         List<Reimbursement> reimbursements = null;
         Transaction tx = null;
         Session session = app.getFactory().openSession();
+        logger.info("Getting all Reimbursements by Status from database: \n\t" + status.toString());
 
         try {
             tx = session.beginTransaction();
@@ -87,10 +99,12 @@ public class ReimbursementsRepository {
 
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }
+
         return reimbursements;
     }
 
@@ -102,9 +116,8 @@ public class ReimbursementsRepository {
     @SuppressWarnings("unchecked")
     public Optional<Reimbursement> getAReimbByReimbId(Integer reimbId) {
         Optional<Reimbursement> reimbursement = Optional.empty();
-        // createQuery().stream.findFirst()
-        // reimbursement.get() in service
-        
+        logger.info("Getting a Reimbursements by Id from database: \n\t" + reimbId);
+
         Transaction tx = null;
         Session session = app.getFactory().openSession();
 
@@ -118,10 +131,12 @@ public class ReimbursementsRepository {
 
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }
+
         return reimbursement;
     }
 
@@ -133,9 +148,9 @@ public class ReimbursementsRepository {
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByAuthorId(Integer authorId) {
         List<Reimbursement> reimbursements = null;
-        
         Transaction tx = null;
         Session session = app.getFactory().openSession();
+        logger.info("Getting a Reimbursements by AuthorId from database: \n\t" + authorId);
 
         try {
             tx = session.beginTransaction();
@@ -147,7 +162,8 @@ public class ReimbursementsRepository {
 
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }
@@ -164,9 +180,10 @@ public class ReimbursementsRepository {
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByAuthorIdAndStatus(Integer authorId, ReimbursementStatus reStat) {
         List<Reimbursement> reimbursements = null;
-        
         Transaction tx = null;
         Session session = app.getFactory().openSession();
+        logger.info("Getting a Reimbursements by AuthorId and Status from database: \n\t"
+                + "AuthorId: " + authorId + " Reimb Status: " + reStat.toString());
 
         try {
             tx = session.beginTransaction();
@@ -180,11 +197,12 @@ public class ReimbursementsRepository {
 
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }
-        
+
         return reimbursements;
     }
 
@@ -197,9 +215,10 @@ public class ReimbursementsRepository {
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByAuthorIdAndType(Integer authorId, ReimbursementType reType) throws SQLException {
         List<Reimbursement> reimbursements = null;
-        
         Transaction tx = null;
         Session session = app.getFactory().openSession();
+        logger.info("Getting a Reimbursements by AuthorId and Type from database \n\t"
+                + "AuthorId: " + authorId + " Reimb Type: " + reType.toString());
 
         try {
             tx = session.beginTransaction();
@@ -212,20 +231,21 @@ public class ReimbursementsRepository {
 
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }
-        
+
         return reimbursements;
     }
 
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByType(ReimbursementType type)  {
         List<Reimbursement> reimbursements = null;
-        
         Transaction tx = null;
         Session session = app.getFactory().openSession();
+        logger.info("Getting a Reimbursements by Type from database: \n\t" + type);
 
         try {
             tx = session.beginTransaction();
@@ -236,11 +256,12 @@ public class ReimbursementsRepository {
 
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }
-        
+
         return reimbursements;
     }
 
@@ -252,9 +273,9 @@ public class ReimbursementsRepository {
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByResolverId(Integer resolverId) {
         List<Reimbursement> reimbursements = null;
-        
         Transaction tx = null;
         Session session = app.getFactory().openSession();
+        logger.info("Getting a Reimbursements by ResolverId from database: \n\t" + resolverId);
 
         try {
             tx = session.beginTransaction();
@@ -265,11 +286,12 @@ public class ReimbursementsRepository {
 
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }
-        
+
         return reimbursements;
     }
 
@@ -282,9 +304,10 @@ public class ReimbursementsRepository {
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByResolverIdAndStatus(Integer resolverId, ReimbursementStatus reStat) {
         List<Reimbursement> reimbursements = null;
-        
         Transaction tx = null;
         Session session = app.getFactory().openSession();
+        logger.info("Getting a Reimbursements by ResolverId and Status from database: \n\t" +
+                "ResolverId: " + resolverId + " Reimb Status: " + reStat);
 
         try {
             tx = session.beginTransaction();
@@ -297,11 +320,12 @@ public class ReimbursementsRepository {
 
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }
-        
+
         return reimbursements;
     }
 
@@ -314,9 +338,10 @@ public class ReimbursementsRepository {
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByResolverIdAndType(Integer resolverId, ReimbursementType reType) {
         List<Reimbursement> reimbursements = null;
-        
         Transaction tx = null;
         Session session = app.getFactory().openSession();
+        logger.info("Getting a Reimbursements by ResolverId and Type from database: \n\t" +
+                "ResolverId: " + resolverId + " Type: " + reType);
 
         try {
             tx = session.beginTransaction();
@@ -329,11 +354,12 @@ public class ReimbursementsRepository {
 
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }
-        
+
         return reimbursements;
     }
 
@@ -347,6 +373,7 @@ public class ReimbursementsRepository {
         boolean updated = false;
         Transaction tx = null;
         Session session = app.getFactory().openSession();
+        logger.info("Updating Reimbursement from database: \n\t" + reimb);
 
         try {
             tx = session.beginTransaction();
@@ -355,10 +382,12 @@ public class ReimbursementsRepository {
             updated = true;
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }
+
         return updated;
     }
 
@@ -368,13 +397,15 @@ public class ReimbursementsRepository {
      * @param resolverId
      * @param statusId
      * @param reimbId
-     * @return {@code true} if the update was successful, {@code false} otherwise
+     * @return {@code true} if the up {@code false} otherwise
      */
     public boolean updateFIN(Integer resolverId, Integer statusId, Integer reimbId) {
         Reimbursement reimbursement = null;
         boolean updated = false;
         Transaction tx = null;
         Session session = app.getFactory().openSession();
+        logger.info("Updating Reimbursement from database by FIN: \n\t"
+                + "ResolverId: " + resolverId + " StatusId: " + statusId + " ReimbId: " + reimbId);
 
         try {
             tx = session.beginTransaction();
@@ -386,11 +417,12 @@ public class ReimbursementsRepository {
             updated = true;
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }
-        
+
         return updated;
     }
 
@@ -398,13 +430,15 @@ public class ReimbursementsRepository {
      * A method to update only the resolved timestamp by the id of the reimbursement
      * @param reimbId The ID of the reimbursement in the database that is requested
      * @param timestamp an SQL timestamp object to set the time resolved to
-     * @return returns {@code true} if the update was successful, {@code false} otherwise
+     * @return returns {@code true} if the up {@code false} otherwise
      */
     public boolean updateResolvedTimeStampByReimbId(Integer reimbId, Timestamp timestamp) {
         Reimbursement reimbursement = null;
         boolean updated = false;
         Transaction tx = null;
         Session session = app.getFactory().openSession();
+        logger.info("Updating Reimbursement from database with Timestamp and Reimb Id: \n\t"
+                + " Timestamp: " + timestamp + " ReimbId: " + reimbId);
 
         try {
             tx = session.beginTransaction();
@@ -415,11 +449,12 @@ public class ReimbursementsRepository {
             updated = true;
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }
-        
+
         return updated;
     }
 
@@ -434,6 +469,8 @@ public class ReimbursementsRepository {
         boolean updated = false;
         Transaction tx = null;
         Session session = app.getFactory().openSession();
+        logger.info("Updating Reimbursement from database with Resolver Id and Reimb Id: \n\t"
+                + " Resolver Id: " + resolverId + " ReimbId: " + reimbId);
 
         try {
             tx = session.beginTransaction();
@@ -444,11 +481,12 @@ public class ReimbursementsRepository {
             updated = true;
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }
-        
+
         return updated;
     }
 
@@ -456,13 +494,15 @@ public class ReimbursementsRepository {
      * A method to update only the Reimbursement TYPE by the id of the Reimbursement
      * @param reimbId The ID of the reimbursement in the database that is requested
      * @param reimbursementType the type to update the record to
-     * @return returns {@code true} if the update was successful, {@code false} otherwise
+     * @return returns {@code true} if the up {@code false} otherwise
      */
     public boolean updateReimbursementTypeByReimbId(Integer reimbId, ReimbursementType reimbursementType) {
         Reimbursement reimbursement = null;
         boolean updated = false;
         Transaction tx = null;
         Session session = app.getFactory().openSession();
+        logger.info("Updating Reimbursement from database with Reimb Type and Reimb Id: \n\t"
+                + " Reimb Type: " + reimbursementType + " ReimbId: " + reimbId);
 
         try {
             tx = session.beginTransaction();
@@ -473,11 +513,12 @@ public class ReimbursementsRepository {
             updated = true;
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }
-        
+
         return updated;
     }
 
@@ -485,13 +526,15 @@ public class ReimbursementsRepository {
      * A method to update the status of a reimbursement in the database
      * @param reimbId The ID of the reimbursement in the database that is requested
      * @param newReimbStatus the status to update the record to
-     * @return returns {@code true} if the update was successful, {@code false} otherwise
+     * @return returns {@code true} if the up {@code false} otherwise
      */
     public boolean updateReimbursementStatusByReimbId(Integer reimbId, ReimbursementStatus newReimbStatus) {
         Reimbursement reimbursement = null;
         boolean updated = false;
         Transaction tx = null;
         Session session = app.getFactory().openSession();
+        logger.info("Updating Reimbursement from database with Reimb Status and Reimb Id: \n\t"
+                + " Reimb Status: " + newReimbStatus + " ReimbId: " + reimbId);
 
         try {
             tx = session.beginTransaction();
@@ -503,11 +546,12 @@ public class ReimbursementsRepository {
             updated = true;
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }
-        
+
         return updated;
     }
 
@@ -523,6 +567,7 @@ public class ReimbursementsRepository {
         Transaction tx = null;
         Session session = app.getFactory().openSession();
         boolean deleted = false;
+        logger.info("Deleting Reimbursement from database with Id: " + reimbId);
 
         try {
             tx = session.beginTransaction();
@@ -534,7 +579,8 @@ public class ReimbursementsRepository {
 
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
-            e.printStackTrace();
+            logger.error("Something with Hibernate went wrong");
+            logger.error(e.getStackTrace());
         } finally {
             session.close();
         }

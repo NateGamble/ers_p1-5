@@ -6,6 +6,9 @@ import java.util.Properties;
 
 import com.revature.models.*;
 
+import com.revature.services.ReimbursementService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -13,6 +16,8 @@ import org.hibernate.cfg.Environment;
 import org.hibernate.service.ServiceRegistry;
 
 public class AppState {
+
+    private static final Logger logger = LogManager.getLogger(ReimbursementService.class);
 
     public static final AppState app = new AppState();
 
