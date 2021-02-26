@@ -72,6 +72,7 @@ public class AuthServlet extends HttpServlet {
             logger.error(e.getMessage());
             resp.setStatus(500);
             writer.write(errRespFactory.generateErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR).toJSON());
+            e.printStackTrace(writer);
         }
 
     }
