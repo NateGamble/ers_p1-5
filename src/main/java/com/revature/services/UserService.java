@@ -9,6 +9,9 @@ import com.revature.repositories.UserRepository;
 
 import org.hibernate.boot.model.naming.IllegalIdentifierException;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,6 +55,7 @@ public class UserService {
         if (username == null || username.trim().equals("") || password == null || password.trim().equals("")){
             throw new InvalidCredentialsException("Invalid credentials provided");
         }
+        password = passHash(password);
         return userRepo.getAUserByUsernameAndPassword(username,password)
                 .orElseThrow(PersistenceException::new);
     }
@@ -74,6 +78,7 @@ public class UserService {
             throw new InvalidCredentialsException("Email is already in use");
         }
         newUser.setUserRole(Role.EMPLOYEE.ordinal() + 1);
+        setUserPassHash(newUser);
         userRepo.addUser(newUser);
     }
 
@@ -85,10 +90,19 @@ public class UserService {
         if (!isUserValid(newUser)) {
             throw new InvalidColumnException("Invalid user field values provided during registration!");
         }
-        if (!userRepo.updateAUser(newUser)){
-            throw new PersistenceException("There was a problem trying to update the user");
+        if (userRepo.getAUserById(newUser.getUserId()).orElseThrow(PersistenceException::new).getPassword()
+        == newUser.getPassword()){
+            if (!userRepo.updateAUser(newUser)){
+                throw new PersistenceException("There was a problem trying to update the user");
+            }
+        } else {
+            setUserPassHash(newUser);
+            if (!userRepo.updateAUser(newUser)){
+                throw new PersistenceException("There was a problem trying to update the user");
+            }
         }
     }
+
 
     /**
      * Deletes a user by changing their role to 4
@@ -136,5 +150,59 @@ public class UserService {
         if (user.getUsername() == null || user.getUsername().trim().equals("")) return false;
         if (user.getPassword() == null || user.getPassword().trim().equals("")) return false;
         return true;
+    }
+
+    /**
+     * Method used to Hash passwords by taking in the User and accessing Password field.
+     * Authored by Lokesh Gupta via HowToDoInJava:
+     * https://howtodoinjava.com/java/java-security/how-to-generate-secure-password-hash-md5-sha-pbkdf2-bcrypt-examples/
+     */
+    public void setUserPassHash(User user) {
+        String pass = user.getPassword();
+        try {
+            // MessageDigest used to "Digest" the password and output Hash.
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            //Adding password bytes to digest.
+            md.update(pass.getBytes());
+            //Get's Hash Bytes.
+            byte[] bytes = md.digest();
+            //Needs to be converted from bytes to Hex
+            StringBuilder sb = new StringBuilder();
+            for(int i = 0; i < bytes.length; i++)
+            {
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            //Gets completed Hash password in hex format.
+            user.setPassword(sb.toString());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Method used to Hash passwords by taking in the Password and modifying.
+     * Authored by Lokesh Gupta via HowToDoInJava:
+     * https://howtodoinjava.com/java/java-security/how-to-generate-secure-password-hash-md5-sha-pbkdf2-bcrypt-examples/
+    */
+    public String passHash(String pass) {
+        try {
+            // MessageDigest used to "Digest" the password and output Hash.
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            //Adding password bytes to digest.
+            md.update(pass.getBytes());
+            //Get's Hash Bytes.
+            byte[] bytes = md.digest();
+            //Needs to be converted from bytes to Hex
+            StringBuilder sb = new StringBuilder();
+            for(int i = 0; i < bytes.length; i++)
+            {
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            //Gets completed Hash password in hex format.
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

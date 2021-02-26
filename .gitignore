@@ -34,5 +34,17 @@ out/
 # Properties files
 *.properties
 
-# Hibernate config XML
-*.cfg.xml
+### vscode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+.settings/*
+.classpath
+.factorypath
+.project
+
+#File for testing
+src/main/resources/receipt.txt

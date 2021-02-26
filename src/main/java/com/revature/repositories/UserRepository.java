@@ -1,8 +1,6 @@
 package com.revature.repositories;
 
-import com.revature.models.Reimbursement;
 import com.revature.models.User;
-import com.revature.util.ConnectionFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -146,6 +144,33 @@ public class UserRepository {
             tx = session.beginTransaction();
             user = session.createQuery("FROM User u where u.username = :username AND u.password = :password")
                     .setParameter("username", userName).setParameter("password", password).stream().findFirst();
+
+            tx.commit();
+
+        } catch (HibernateException e) {
+            if (tx!= null) tx.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return user;
+    }
+
+    /**
+     * A method to get a single user by a given Id
+     * @param id the user's id
+     * @return Optional object which may or may not contain a User.
+     * @throws
+     */
+    public Optional<User> getAUserById(int id) {
+        Optional<User> user = Optional.empty();
+        Transaction tx = null;
+        Session session = app.getFactory().openSession();
+
+        try {
+            tx = session.beginTransaction();
+            user = session.createQuery("FROM User u where u.id = :id")
+                    .setParameter("id", id).stream().findFirst();
 
             tx.commit();
 
