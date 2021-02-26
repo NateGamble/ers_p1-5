@@ -2,11 +2,14 @@ package com.revature.servlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.dtos.HttpStatus;
+import com.revature.dtos.Principal;
 import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.models.User;
 import com.revature.repositories.UserRepository;
 import com.revature.services.UserService;
 import com.revature.util.ErrorResponseFactory;
+import com.revature.util.JwtParser;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,8 +37,10 @@ public class UserServlet extends HttpServlet {
         ObjectMapper mapper = new ObjectMapper();
         resp.setContentType("application/json");
 
-        //TODO: Set up JWT Here.
-        User rqstr = null;
+        // JWT check user isn't deleted
+        JwtParser.checkToken(req);
+        Principal p = (Principal) req.getAttribute("principal");
+        User rqstr = userService.getUserByUsername(p.getUsername());
 
         String userIdParam = req.getParameter("userId");
 
@@ -86,8 +91,10 @@ public class UserServlet extends HttpServlet {
         ObjectMapper mapper = new ObjectMapper();
         resp.setContentType("application/json");
 
-        //TODO: Set up JWT Here.
-        User rqstr = null;
+        // JWT check user isn't deleted
+        JwtParser.checkToken(req);
+        Principal p = (Principal) req.getAttribute("principal");
+        User rqstr = userService.getUserByUsername(p.getUsername());
 
         String userIdParam = req.getParameter("userId");
 
@@ -139,8 +146,10 @@ public class UserServlet extends HttpServlet {
         ObjectMapper mapper = new ObjectMapper();
         resp.setContentType("application/json");
 
-        //TODO: Set up JWT Here.
-        User rqstr = null;
+        // JWT check user isn't deleted
+        JwtParser.checkToken(req);
+        Principal p = (Principal) req.getAttribute("principal");
+        User rqstr = userService.getUserByUsername(p.getUsername());
 
         try{
             if (rqstr != null && rqstr.getUserRole().toString().equals("ADMIN")){
@@ -190,8 +199,10 @@ public class UserServlet extends HttpServlet {
         ObjectMapper mapper = new ObjectMapper();
         resp.setContentType("application/json");
 
-        //TODO: Set up JWT Here.
-        User rqstr = null;
+        // JWT check user isn't deleted
+        JwtParser.checkToken(req);
+        Principal p = (Principal) req.getAttribute("principal");
+        User rqstr = userService.getUserByUsername(p.getUsername());
 
         try{
             if (rqstr != null && rqstr.getUserRole().toString().equals("ADMIN")){

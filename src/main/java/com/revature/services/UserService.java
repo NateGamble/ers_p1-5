@@ -37,6 +37,11 @@ public class UserService {
         return users;
     }
 
+    public User getUserByUsername(String username) {
+        User u = userRepo.getAUserByUsername(username).orElse(null);
+        return u;
+    }
+
     /**
      * Authentication method used by the authentication servlet
      * @param username username of the user
