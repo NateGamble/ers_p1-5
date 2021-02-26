@@ -185,6 +185,7 @@ public class ReimbursementService {
         if (reimb.getAuthor() == null) return false;
         if (reimb.getAuthor().getUserId() <= 0 ) return false;
         if (reimb.getReimbursementType() == null ) return false;
+        if (reimb.getReimbursementStatus() == null) return false;
         return true;
     }
 
