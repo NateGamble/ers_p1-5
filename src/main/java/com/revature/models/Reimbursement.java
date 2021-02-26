@@ -43,10 +43,12 @@ public class Reimbursement {
     @Column(name = "receipt", columnDefinition = "bytea")
     private byte[] receipt;
 
-    @Column(name = "author_id", columnDefinition = "int4 NOT NULL")
+    @ManyToOne(targetEntity = User.class, optional = false)
+    @JoinColumn(name = "author_id", columnDefinition = "int4 NOT NULL")
     private User author;
 
-    @Column(name = "resolver_id", columnDefinition = "int4 NULL")
+    @ManyToOne(targetEntity = User.class)
+    @JoinColumn(name = "resolver_id", columnDefinition = "int4 NULL")
     private User resolver;
 
     @Column(name = "reimbursement_status_id", columnDefinition = "int4 NOT NULL")
