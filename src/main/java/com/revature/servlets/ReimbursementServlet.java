@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.dtos.HttpStatus;
 import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.models.Reimbursement;
+import com.revature.models.ReimbursementStatus;
+import com.revature.models.ReimbursementType;
 import com.revature.models.User;
 import com.revature.repositories.UserRepository;
 import com.revature.services.ReimbursementService;
@@ -44,35 +46,65 @@ public class ReimbursementServlet extends HttpServlet {
         User rqstr = null;
 
         String userIdParam = req.getParameter("userId");
+        String reimbursementIdParam = req.getParameter("reimbursementId");
+        String reimbursementTypeParam = req.getParameter("reimbursementType");
+        String reimbursementStatusParam = req.getParameter("reimbursementStatus");
 
         try{
-            if (rqstr != null && rqstr.getUserRole().toString().equals("Finance Manager")){
+            if(reimbursementIdParam == null) {
+                if (rqstr != null && rqstr.getUserRole().toString().equals("Finance Manager")) {
 
-                logger.info("ReimbursementServlet.doGet() invoked by requester{}", rqstr);
-                logger.info("Retrieving all reimbursements");
-                List<Reimbursement> reimbursements = reimbursementService.getAllReimb();
-                String reimbursementsJson = mapper.writeValueAsString(reimbursements);
-                writer.write(reimbursementsJson);
+                    if (reimbursementTypeParam != null){
+                        logger.info("ReimbursementServlet.doGet() invoked by requester{}", rqstr);
+                        logger.info("Retrieving all reimbursements with Type{}" + reimbursementTypeParam);
+                        List<Reimbursement> reimbursements = reimbursementService
+                                .getReimbByType(ReimbursementType.getByName(reimbursementTypeParam));
+                        String reimbursementsJson = mapper.writeValueAsString(reimbursements);
+                        writer.write(reimbursementsJson);
+                    } else if (reimbursementStatusParam != null){
+                        logger.info("ReimbursementServlet.doGet() invoked by requester{}", rqstr);
+                        logger.info("Retrieving all reimbursements with Status{}" + reimbursementStatusParam);
+                        List<Reimbursement> reimbursements = reimbursementService
+                                .getReimbByStatus(ReimbursementStatus.getByName(reimbursementStatusParam));
+                        String reimbursementsJson = mapper.writeValueAsString(reimbursements);
+                        writer.write(reimbursementsJson);
+                    } else {
+                        logger.info("ReimbursementServlet.doGet() invoked by requester{}", rqstr);
+                        logger.info("Retrieving all reimbursements");
+                        List<Reimbursement> reimbursements = reimbursementService.getAllReimb();
+                        String reimbursementsJson = mapper.writeValueAsString(reimbursements);
+                        writer.write(reimbursementsJson);
+                    }
+                } else if (rqstr != null && rqstr.getUserRole().toString().equals("Employee")) {
 
-            } else if (rqstr != null && rqstr.getUserRole().toString().equals("Employee")) {
+                    logger.info("ReimbursementServlet.doGet() invoked by requester{}", rqstr);
+                    logger.info("Retrieving all reimbursements");
+                    int desiredId = Integer.parseInt(userIdParam);
+                    List<Reimbursement> reimbursements = reimbursementService.getReimbByUserId(desiredId);
+                    String reimbursementsJson = mapper.writeValueAsString(reimbursements);
+                    writer.write(reimbursementsJson);
 
-                logger.info("ReimbursementServlet.doGet() invoked by requester{}", rqstr);
-                logger.info("Retrieving all reimbursements");
-                int desiredId = Integer.parseInt(userIdParam);
-                List<Reimbursement> reimbursements = reimbursementService.getReimbByUserId(desiredId);
-                String reimbursementsJson = mapper.writeValueAsString(reimbursements);
-                writer.write(reimbursementsJson);
-
-            }else {
-                if (rqstr == null) {
-                    logger.warn("Unauthorized request made by unknown requester");
-                    resp.setStatus(401);
-                    writer.write(errResponseFactory.generateErrorResponse(HttpStatus.UNAUTHORIZED).toJSON());
-                } else{
-                    logger.warn("Request made by requester, {} who lacks proper authorities",
-                            rqstr.getUsername());
-                    resp.setStatus(403);
-                    writer.write(errResponseFactory.generateErrorResponse(HttpStatus.FORBIDDEN).toJSON());
+                } else {
+                    if (rqstr == null) {
+                        logger.warn("Unauthorized request made by unknown requester");
+                        resp.setStatus(401);
+                        writer.write(errResponseFactory.generateErrorResponse(HttpStatus.UNAUTHORIZED).toJSON());
+                    } else {
+                        logger.warn("Request made by requester, {} who lacks proper authorities",
+                                rqstr.getUsername());
+                        resp.setStatus(403);
+                        writer.write(errResponseFactory.generateErrorResponse(HttpStatus.FORBIDDEN).toJSON());
+                    }
+                }
+            } else {
+                if (rqstr != null && rqstr.getUserRole().toString().equals("Finance Manager") ||
+                        rqstr != null && rqstr.getUserRole().toString().equals("Employee")) {
+                    logger.info("ReimbursementServlet.doGet() invoked by requester{}", rqstr);
+                    logger.info("Retrieving reimbursement by id{} ", reimbursementIdParam);
+                    int desiredId = Integer.parseInt(reimbursementIdParam);
+                    Reimbursement reimbursements = reimbursementService.getReimbById(desiredId);
+                    String reimbursementsJson = mapper.writeValueAsString(reimbursements);
+                    writer.write(reimbursementsJson);
                 }
             }
         } catch (NumberFormatException e) {
@@ -153,12 +185,47 @@ public class ReimbursementServlet extends HttpServlet {
         //TODO: Set up JWT Here.
         User rqstr = null;
 
+        String userIdParam = req.getParameter("userId");
+        String reimbursementIdParam = req.getParameter("reimbursementId");
+        String reimbursementStatusParam = req.getParameter("reimbursementStatus");
+        String reimbursementApprove = req.getParameter("reimbursementApprove");
+        String reimbursementDeny = req.getParameter("reimbursementDeny");
+
         try{
             if (rqstr != null && rqstr.getUserRole().toString().equals("Employee")){
-
-
+                if (reimbursementStatusParam != null){
+                    logger.info("UserServlet.doPut() invoked by requester{}", rqstr);
+                    Reimbursement reimb = mapper.readValue(req.getInputStream(), Reimbursement.class);
+                    if (reimb.getReimbursementStatus().toString().equals("Pending")){
+                        logger.info("Updating Reimbursement Status");
+                        reimbursementService.updateEMP(reimb);
+                        String newUserJSON = mapper.writeValueAsString(reimb);
+                        writer.write(newUserJSON);
+                        resp.setStatus(200);
+                    } else{
+                        logger.info("Reimbursement not Pending, cannot update.");
+                    }
+                }
             } else if (rqstr != null && rqstr.getUserRole().toString().equals("Finance Manager")){
-
+                if (reimbursementApprove != null){
+                    logger.info("Approving Reimbursement");
+                    int reimbId = Integer.parseInt(reimbursementIdParam);
+                    int approver = Integer.parseInt(userIdParam);
+                    reimbursementService.approve(approver, reimbId);
+                    String newUserJSON = mapper.writeValueAsString(reimbId);
+                    writer.write(newUserJSON);
+                    resp.setStatus(200);
+                } else if(reimbursementDeny != null){
+                    logger.info("Denying Reimbursement");
+                    int reimbId = Integer.parseInt(reimbursementIdParam);
+                    int denier = Integer.parseInt(userIdParam);
+                    reimbursementService.deny(denier, reimbId);
+                    String newUserJSON = mapper.writeValueAsString(reimbId);
+                    writer.write(newUserJSON);
+                    resp.setStatus(200);
+                } else{
+                    logger.info("Reimbursement not confirmed as approval or denial.");
+                }
             } else {
                 if (rqstr == null) {
                     logger.warn("Unauthorized request made by unknown requester");

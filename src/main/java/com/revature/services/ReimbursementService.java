@@ -68,7 +68,20 @@ public class ReimbursementService {
 
     /**
      * Gets all reimbursements by a specified type
-     * @param typeId ordinal number of the type requested, between 1-4
+     * @param reimbId ordinal number of the type requested, between 1-4
+     * @return A list of Reimbursement objects
+     */
+    public Reimbursement getReimbById(Integer reimbId){
+        if (reimbId <= 0 ){
+            throw new IllegalIdentifierException("THE PROVIDED USER ID CANNOT BE LESS THAN ZERO");
+        }
+
+        return reimbRepo.getAReimbByReimbId(reimbId).orElseThrow(PersistenceException::new);
+    }
+
+    /**
+     * Gets all reimbursements by a specified type
+     * @param type ordinal number of the type requested, between 1-4
      * @return A list of Reimbursement objects
      */
     public List<Reimbursement> getReimbByType(ReimbursementType type){
