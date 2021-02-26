@@ -56,7 +56,7 @@ public class UserServlet extends HttpServlet {
         String userIdParam = req.getParameter("userId");
 
         try{
-            if (rqstr != null && rqstr.getUserRole().equals(Role.ADMIN)){
+            if (rqstr != null && rqstr.getUserRole() == 1){
 
                 logger.info("UserServlet.doDelete() invoked by requester{}", rqstr);
                 int desiredId = Integer.parseInt(userIdParam);
@@ -116,7 +116,7 @@ public class UserServlet extends HttpServlet {
         String userIdParam = req.getParameter("userId");
 
         try{
-            if (rqstr != null && rqstr.getUserRole().equals(Role.ADMIN)){
+            if (rqstr != null && rqstr.getUserRole() == 1){
 
                 logger.info("UserServlet.doGet() invoked by requester{}", rqstr);
 
@@ -175,7 +175,7 @@ public class UserServlet extends HttpServlet {
         User rqstr = userService.getUserByUsername(p.getUsername());
 
         try{
-            if (rqstr != null && rqstr.getUserRole().equals(Role.ADMIN)){
+            if (rqstr != null && rqstr.getUserRole() == 1){
 
                 logger.info("UserServlet.doPost() invoked by requester{}", rqstr);
                 User user = mapper.readValue(req.getInputStream(), User.class);
@@ -236,7 +236,7 @@ public class UserServlet extends HttpServlet {
         User rqstr = userService.getUserByUsername(p.getUsername());
 
         try{
-            if (rqstr != null && rqstr.getUserRole().equals(Role.ADMIN)){
+            if (rqstr != null && rqstr.getUserRole() == 1){
 
                 logger.info("UserServlet.doPut() invoked by requester{}", rqstr);
                 User user = mapper.readValue(req.getInputStream(), User.class);
