@@ -50,12 +50,6 @@ public class UserServlet extends HttpServlet {
                     List<User> users = userService.getAllUsers();
                     String usersJson = mapper.writeValueAsString(users);
                     writer.write(usersJson);
-                } else {
-                    int desiredId = Integer.parseInt(userIdParam);
-                    logger.info("Retrieving users with id, {}", desiredId);
-                    User user = userService.getUserById(desiredId);
-                    String userJson = mapper.writeValueAsString(user);
-                    writer.write(userJson);
                 }
 
             } else {
