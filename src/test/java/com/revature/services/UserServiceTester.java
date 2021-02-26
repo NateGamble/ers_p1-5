@@ -29,7 +29,7 @@ public class UserServiceTester {
     static User testUser;
 
     @InjectMocks
-    UserService userService = new UserService();
+    UserService userService = UserService.getInstance();
 
     @Mock
     UserRepository userRepository;

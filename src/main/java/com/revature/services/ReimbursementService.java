@@ -19,6 +19,15 @@ import java.util.List;
  */
 public class ReimbursementService {
     private ReimbursementsRepository reimbRepo = new ReimbursementsRepository();
+    private static final ReimbursementService service = new ReimbursementService();
+
+    private ReimbursementService() {
+        super();
+    }
+
+    public static ReimbursementService getInstance() {
+        return service;
+    }
 
     /**
      * Gets all Reimbursements from the DataBase
@@ -59,7 +68,20 @@ public class ReimbursementService {
 
     /**
      * Gets all reimbursements by a specified type
-     * @param typeId ordinal number of the type requested, between 1-4
+     * @param reimbId ordinal number of the type requested, between 1-4
+     * @return A list of Reimbursement objects
+     */
+    public Reimbursement getReimbById(Integer reimbId){
+        if (reimbId <= 0 ){
+            throw new IllegalIdentifierException("THE PROVIDED USER ID CANNOT BE LESS THAN ZERO");
+        }
+
+        return reimbRepo.getAReimbByReimbId(reimbId).orElseThrow(PersistenceException::new);
+    }
+
+    /**
+     * Gets all reimbursements by a specified type
+     * @param type ordinal number of the type requested, between 1-4
      * @return A list of Reimbursement objects
      */
     public List<Reimbursement> getReimbByType(ReimbursementType type){
@@ -163,6 +185,7 @@ public class ReimbursementService {
         if (reimb.getAuthor() == null) return false;
         if (reimb.getAuthor().getUserId() <= 0 ) return false;
         if (reimb.getReimbursementType() == null ) return false;
+        if (reimb.getReimbursementStatus() == null) return false;
         return true;
     }
 

@@ -21,9 +21,15 @@ import java.util.Optional;
  */
 public class UserService {
     private UserRepository userRepo = new UserRepository();
+    private static final UserService service = new UserService();
 
-    Hashtable<Integer, String>
-        hm = new Hashtable<Integer,String>();
+    private UserService() {
+        super();
+    }
+
+    public static UserService getInstance() {
+        return service;
+    }
 
     /**
      * Gets all users from the DataBase
@@ -32,6 +38,11 @@ public class UserService {
     public List<User> getAllUsers(){
         List<User> users = userRepo.getAllusers();
         return users;
+    }
+
+    public User getUserByUsername(String username) {
+        User u = userRepo.getAUserByUsername(username).orElse(null);
+        return u;
     }
 
     /**
