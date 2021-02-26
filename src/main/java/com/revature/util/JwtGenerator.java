@@ -1,6 +1,9 @@
 package com.revature.util;
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.Date;
+import java.util.Properties;
 
 import com.revature.models.User;
 
@@ -16,6 +19,25 @@ public class JwtGenerator {
         // get current time to set token expiry time
         long now = System.currentTimeMillis();
 
+        File temp = new File("src/main/resources/application.properties");
+        String key = null;
+
+        if (temp.exists()) {
+            try {
+                Properties props = new Properties();
+
+                ClassLoader loader = Thread.currentThread().getContextClassLoader();
+                InputStream input = loader.getResourceAsStream("application.properties");
+
+                props.load(input);
+                key = props.getProperty("key");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            key = System.getProperty("key");
+        }
+
         JwtBuilder builder = Jwts.builder()
                                 .setId(Integer.toString(subject.getUserId()))
                                 .setSubject(subject.getUsername())
@@ -25,7 +47,7 @@ public class JwtGenerator {
                                 // 5 minute expiration
                                 .setExpiration(new Date(now + 300000))
                                 // key is like a salt, should be stored in .properties file
-                                .signWith(sigAlg, "super-secret-key");
+                                .signWith(sigAlg, key);
 
         // generates actual string for jwt
         return builder.compact();

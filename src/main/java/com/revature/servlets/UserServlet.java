@@ -7,7 +7,6 @@ import com.revature.models.User;
 import com.revature.repositories.UserRepository;
 import com.revature.services.UserService;
 import com.revature.util.ErrorResponseFactory;
-import jdk.internal.jline.internal.Log;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
