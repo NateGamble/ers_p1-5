@@ -9,11 +9,15 @@ import com.revature.models.User;
 import com.revature.repositories.UserRepository;
 import com.revature.services.UserService;
 import com.revature.util.ErrorResponseFactory;
+import com.revature.util.JwtGenerator;
+import com.revature.util.JwtParser;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,7 +26,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * Taken from Quizzard project at https://github.com/210119-java-enterprise/quizzard
+ * Taken from Quizzard project at
+ * https://github.com/210119-java-enterprise/quizzard
  */
 @WebServlet("/auth")
 public class AuthServlet extends HttpServlet {
@@ -30,19 +35,6 @@ public class AuthServlet extends HttpServlet {
     public final UserService userService = UserService.getInstance();
     private final ErrorResponseFactory errRespFactory = ErrorResponseFactory.getInstance();
     private static final Logger logger = LogManager.getLogger(UserServlet.class);
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        HttpSession session = req.getSession(false);
-
-        if (session != null) {
-            String username = ((User) session.getAttribute("this-user")).getUsername();
-            logger.info("Invalidating session for user, {}", username);
-            req.getSession().invalidate();
-        }
-
-    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -60,20 +52,23 @@ public class AuthServlet extends HttpServlet {
 
             writer.write(mapper.writeValueAsString(authUser));
 
-            logger.info("Establishing a session for user, {}", creds.getUsername());
-            req.getSession().setAttribute("this-user", authUser);
+            logger.info("Establishing a JWT for user, {}", creds.getUsername());
+            String token = JwtGenerator.createJwt(authUser);
+            Cookie tokenCookie = new Cookie("token", token);
+            tokenCookie.setHttpOnly(true);
+            resp.addCookie(tokenCookie);
 
         } catch (MismatchedInputException e) {
-            e.printStackTrace();
             logger.warn(e.getMessage());
             resp.setStatus(400);
             writer.write(errRespFactory.generateErrorResponse(HttpStatus.BAD_REQUEST).toJSON());
         } catch (AuthenticationException e) {
             e.printStackTrace();
+            logger.info(e.getMessage());
             resp.setStatus(401);
             writer.write(errRespFactory.generateErrorResponse(401, e.getMessage()).toJSON());
         } catch (Exception e) {
-            e.printStackTrace();
+            // e.printStackTrace();
             logger.error(e.getMessage());
             resp.setStatus(500);
             writer.write(errRespFactory.generateErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR).toJSON());
