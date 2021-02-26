@@ -1,9 +1,7 @@
 package com.revature.models;
 
 
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.Generated;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -152,7 +150,7 @@ public class User {
         return "User{" +
                 "userId=" + userId +
                 ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
+                ", password='" + "********" + '\'' +
                 ", firstname='" + firstname + '\'' +
                 ", lastname='" + lastname + '\'' +
                 ", email='" + email + '\'' +
