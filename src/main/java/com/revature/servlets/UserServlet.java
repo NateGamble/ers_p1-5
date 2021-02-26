@@ -196,6 +196,8 @@ public class UserServlet extends HttpServlet {
                             rqstr.getUsername());
                     resp.setStatus(403);
                     writer.write(errResponseFactory.generateErrorResponse(HttpStatus.FORBIDDEN).toJSON());
+                    writer.write("Request made by requester, " + rqstr.getUsername() + 
+                                    " who lacks proper authorities. They are a " + rqstr.getUserRole());
                 }
             }
         } catch (NumberFormatException e) {
