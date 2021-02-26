@@ -18,6 +18,9 @@ public class JwtParser {
         // get HTTP cookie named authorization
         String token = "";
         Cookie[] cookies = req.getCookies();
+        if (cookies == null) {
+            return;
+        }
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals("token")) {
                 token = cookie.getValue();

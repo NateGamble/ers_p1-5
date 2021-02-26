@@ -139,6 +139,7 @@ public class ReimbursementServlet extends HttpServlet {
             logger.error(e.getMessage());
             resp.setStatus(500);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR).toJSON());
+            e.printStackTrace(writer);
         }
     }
 
@@ -192,6 +193,7 @@ public class ReimbursementServlet extends HttpServlet {
             logger.error(e.getMessage());
             resp.setStatus(500);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR).toJSON());
+            e.printStackTrace(writer);
         }
     }
 
@@ -275,6 +277,7 @@ public class ReimbursementServlet extends HttpServlet {
             logger.error(e.getMessage());
             resp.setStatus(500);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR).toJSON());
+            e.printStackTrace(writer);
         }
     }
 
