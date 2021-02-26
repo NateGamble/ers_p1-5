@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.dtos.HttpStatus;
 import com.revature.dtos.Principal;
 import com.revature.exceptions.ResourceNotFoundException;
+import com.revature.models.Role;
 import com.revature.models.User;
 import com.revature.repositories.UserRepository;
 import com.revature.services.UserService;
@@ -49,7 +50,7 @@ public class UserServlet extends HttpServlet {
         String userIdParam = req.getParameter("userId");
 
         try{
-            if (rqstr != null && rqstr.getUserRole().toString().equals("Admin")){
+            if (rqstr != null && rqstr.getUserRole().equals(Role.ADMIN)){
 
                 logger.info("UserServlet.doDelete() invoked by requester{}", rqstr);
                 int desiredId = Integer.parseInt(userIdParam);
@@ -103,7 +104,7 @@ public class UserServlet extends HttpServlet {
         String userIdParam = req.getParameter("userId");
 
         try{
-            if (rqstr != null && rqstr.getUserRole().toString().equals("Admin")){
+            if (rqstr != null && rqstr.getUserRole().equals(Role.ADMIN)){
 
                 logger.info("UserServlet.doGet() invoked by requester{}", rqstr);
 
@@ -156,7 +157,7 @@ public class UserServlet extends HttpServlet {
         User rqstr = userService.getUserByUsername(p.getUsername());
 
         try{
-            if (rqstr != null && rqstr.getUserRole().toString().equals("Admin")){
+            if (rqstr != null && rqstr.getUserRole().equals(Role.ADMIN)){
 
                 logger.info("UserServlet.doPost() invoked by requester{}", rqstr);
                 User user = mapper.readValue(req.getInputStream(), User.class);
@@ -209,7 +210,7 @@ public class UserServlet extends HttpServlet {
         User rqstr = userService.getUserByUsername(p.getUsername());
 
         try{
-            if (rqstr != null && rqstr.getUserRole().toString().equals("Admin")){
+            if (rqstr != null && rqstr.getUserRole().equals(Role.ADMIN)){
 
                 logger.info("UserServlet.doPut() invoked by requester{}", rqstr);
                 User user = mapper.readValue(req.getInputStream(), User.class);
