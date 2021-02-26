@@ -39,6 +39,10 @@ out/
 
 # VScode files
 .vscode/
+.claspath
+.factorypath
+.project
+
 
 #File for testing
 src/main/resources/receipt.txt
