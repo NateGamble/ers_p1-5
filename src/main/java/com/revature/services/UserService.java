@@ -65,8 +65,12 @@ public class UserService {
         password = passHash(password);
 
         logger.info("Authentication successful!");
-        return userRepo.getAUserByUsernameAndPassword(username,password)
-                .orElseThrow(PersistenceException::new);
+        User u = userRepo.getAUserByUsernameAndPassword(username,password).get();
+        if (u == null) {
+            throw new PersistenceException("Could not find user: " + username + " in database.\n" +
+            "password is: " + password);
+        }
+        return u;
     }
 
     /**
