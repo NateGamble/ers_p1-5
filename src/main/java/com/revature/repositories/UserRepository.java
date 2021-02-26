@@ -1,8 +1,6 @@
 package com.revature.repositories;
 
-import com.revature.models.Reimbursement;
 import com.revature.models.User;
-import com.revature.util.ConnectionFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;

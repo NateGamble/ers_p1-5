@@ -36,3 +36,9 @@ out/
 
 # Hibernate config XML
 *.cfg.xml
+
+# VScode files
+.vscode/
+
+#File for testing
+src/main/resources/receipt.txt

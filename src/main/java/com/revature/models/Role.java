@@ -1,8 +1,5 @@
 package com.revature.models;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-
 public enum Role {
     ADMIN("Admin"),
     FINANCE_MANAGER("Finance Manager"),
