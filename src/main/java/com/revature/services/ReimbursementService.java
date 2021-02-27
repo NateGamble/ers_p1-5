@@ -8,6 +8,7 @@ import com.revature.exceptions.PersistenceException;
 import com.revature.models.Reimbursement;
 import com.revature.models.ReimbursementStatus;
 import com.revature.models.ReimbursementType;
+import com.revature.models.User;
 import com.revature.repositories.ReimbursementsRepository;
 import com.revature.repositories.UserRepository;
 import com.revature.util.StatusCodeConverter;
@@ -163,8 +164,9 @@ public class ReimbursementService {
             logger.error("Provided reimbursement is invalid");
             throw new InvalidColumnException("Invalid reimbursement field values provided!");
         }
-        // Change author to null so Hibernate doesn't think we need to persist any changes to author
-        reimb.setAuthor(null);
+        // Change author to actual author so Hibernate doesn't think we need to persist any changes to author
+        User u = UserService.getInstance().getUserByUsername(reimb.getAuthor().getUsername());
+        reimb.setAuthor(u);
         if(!reimbRepo.updateEMP(reimb)){
             logger.error("Provided reimbursement was not updated in the database");
             throw new PersistenceException("Something went wrong trying to save this reimbursement");
