@@ -234,6 +234,7 @@ public class ReimbursementServlet extends HttpServlet {
                 Reimbursement reimb = reimbursementService.getReimbById(newReimb.getId());
                 if (reimb.getReimbursementStatus().toString().equals("Pending")){
                     logger.info("Updating Reimbursement Status");
+                    writer.write(mapper.writeValueAsString(newReimb));
                     reimbursementService.updateEMP(newReimb);
                     String newUserJSON = mapper.writeValueAsString(newReimb);
                     writer.write(newUserJSON);
