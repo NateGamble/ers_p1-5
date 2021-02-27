@@ -1,5 +1,6 @@
 package com.revature.services;
 
+import com.revature.exceptions.AuthenticationException;
 // import com.revature.dtos.RbDTO;
 import com.revature.exceptions.EnumOutOfBoundsException;
 import com.revature.exceptions.InvalidColumnException;
@@ -217,12 +218,12 @@ public class ReimbursementService {
         if (reimb.getAmount() == null || reimb.getAmount() <= 0 ) return false;
         if (reimb.getDescription() == null || reimb.getDescription().trim().equals("")) return false;
         if (reimb.getAuthor() == null) return false;
-        UserRepository userRepo = new UserRepository();
-        if (userRepo.getAUserByUsernameAndPassword(
-                                reimb.getAuthor().getUsername(),
-                                reimb.getAuthor().getPassword())
-                                .orElse(null) == null)
+        UserService service = UserService.getInstance();
+        try {
+            service.authenticate(reimb.getAuthor().getUsername(), reimb.getAuthor().getPassword());
+        } catch (AuthenticationException e) {
             return false;
+        }
         if (reimb.getReimbursementType() == null ) return false;
         if (reimb.getReimbursementStatus() == null) return false;
         return true;
