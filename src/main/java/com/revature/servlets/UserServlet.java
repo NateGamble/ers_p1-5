@@ -53,6 +53,8 @@ public class UserServlet extends HttpServlet {
         }
         User rqstr = userService.getUserByUsername(p.getUsername());
 
+        writer.write(mapper.writeValueAsString(rqstr));
+
         String userIdParam = req.getParameter("userId");
 
         try{
@@ -62,6 +64,9 @@ public class UserServlet extends HttpServlet {
                 int desiredId = Integer.parseInt(userIdParam);
                 logger.info("Retrieving users with id, {}", desiredId);
                 boolean deleted = userService.deleteUserById(desiredId);
+
+                writer.write(mapper.writeValueAsString(deleted));
+
                 String validationJson = mapper.writeValueAsString(deleted);
                 writer.write(validationJson);
 
@@ -78,17 +83,17 @@ public class UserServlet extends HttpServlet {
                 }
             }
         } catch (NumberFormatException e) {
-            e.printStackTrace();
+            e.printStackTrace(writer);
             logger.warn(e.getMessage());
             resp.setStatus(400);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.BAD_REQUEST).toJSON());
         } catch (ResourceNotFoundException e){
-            e.printStackTrace();
+            e.printStackTrace(writer);
             logger.warn(e.getMessage());
             resp.setStatus(404);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.NOT_FOUND).toJSON());
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(writer);
             logger.error(e.getMessage());
             resp.setStatus(500);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR).toJSON());
@@ -112,6 +117,8 @@ public class UserServlet extends HttpServlet {
             return;
         }
         User rqstr = userService.getUserByUsername(p.getUsername());
+
+        writer.write(mapper.writeValueAsString(rqstr));
 
         String userIdParam = req.getParameter("userId");
 
@@ -179,7 +186,9 @@ public class UserServlet extends HttpServlet {
 
                 logger.info("UserServlet.doPost() invoked by requester{}", rqstr);
                 User user = mapper.readValue(req.getInputStream(), User.class);
-                logger.info("Adding user");
+
+                writer.write(mapper.writeValueAsString(user));
+
                 userService.register(user);
                 String newUserJSON = mapper.writeValueAsString(user);
                 writer.write(newUserJSON);
@@ -215,6 +224,7 @@ public class UserServlet extends HttpServlet {
             logger.error(e.getMessage());
             resp.setStatus(500);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR).toJSON());
+            e.printStackTrace(writer);
         }
     }
 
@@ -241,6 +251,9 @@ public class UserServlet extends HttpServlet {
                 logger.info("UserServlet.doPut() invoked by requester{}", rqstr);
                 User user = mapper.readValue(req.getInputStream(), User.class);
                 logger.info("Updating user");
+
+                writer.write(mapper.writeValueAsString(user));
+
                 userService.update(user);
                 String newUserJSON = mapper.writeValueAsString(user);
                 writer.write(newUserJSON);
@@ -259,17 +272,17 @@ public class UserServlet extends HttpServlet {
                 }
             }
         } catch (NumberFormatException e) {
-            e.printStackTrace();
+            e.printStackTrace(writer);
             logger.warn(e.getMessage());
             resp.setStatus(400);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.BAD_REQUEST).toJSON());
         } catch (ResourceNotFoundException e){
-            e.printStackTrace();
+            e.printStackTrace(writer);
             logger.warn(e.getMessage());
             resp.setStatus(404);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.NOT_FOUND).toJSON());
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(writer);
             logger.error(e.getMessage());
             resp.setStatus(500);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR).toJSON());
