@@ -4,6 +4,9 @@ package com.revature.models;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
+
+import com.revature.util.UserRoleConverter;
+
 import java.util.Objects;
 
 /**
@@ -33,7 +36,8 @@ public class User {
     private String email;
 
     @Column(name = "user_role_id", columnDefinition = "int not null")
-    private Integer userRole;
+    @Convert(converter = UserRoleConverter.class)
+    private Role userRole;
 
     @Column(name = "is_active", columnDefinition = "boolean default true")
     private boolean isActive = true;
@@ -50,7 +54,7 @@ public class User {
         this.email = email;
     }
 
-    public User(int userId, String username, String password, String firstname, String lastname, String email, Integer userRole, boolean isActive) {
+    public User(int userId, String username, String password, String firstname, String lastname, String email, Role userRole, boolean isActive) {
         this.userId = userId;
         this.username = username;
         this.password = password;
@@ -109,11 +113,11 @@ public class User {
         this.email = email;
     }
 
-    public Integer getUserRole() {
+    public Role getUserRole() {
         return userRole;
     }
 
-    public void setUserRole(Integer userRole) {
+    public void setUserRole(Role userRole) {
         this.userRole = userRole;
     }
 

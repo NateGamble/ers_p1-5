@@ -8,6 +8,7 @@ import com.revature.models.Reimbursement;
 import com.revature.models.ReimbursementStatus;
 import com.revature.models.ReimbursementType;
 import com.revature.repositories.ReimbursementsRepository;
+import com.revature.repositories.UserRepository;
 import com.revature.util.StatusCodeConverter;
 
 import org.apache.logging.log4j.LogManager;
@@ -209,7 +210,12 @@ public class ReimbursementService {
         if (reimb.getAmount() == null || reimb.getAmount() <= 0 ) return false;
         if (reimb.getDescription() == null || reimb.getDescription().trim().equals("")) return false;
         if (reimb.getAuthor() == null) return false;
-        if (reimb.getAuthor().getUserId() <= 0 ) return false;
+        UserRepository userRepo = new UserRepository();
+        if (userRepo.getAUserByUsernameAndPassword(
+                                reimb.getAuthor().getUsername(),
+                                reimb.getAuthor().getPassword())
+                                .orElse(null) == null)
+            return false;
         if (reimb.getReimbursementType() == null ) return false;
         if (reimb.getReimbursementStatus() == null) return false;
         return true;

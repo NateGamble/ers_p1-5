@@ -6,6 +6,7 @@ import com.revature.exceptions.PersistenceException;
 import com.revature.models.Reimbursement;
 import com.revature.models.ReimbursementStatus;
 import com.revature.models.ReimbursementType;
+import com.revature.models.Role;
 import com.revature.models.User;
 import com.revature.repositories.ReimbursementsRepository;
 import com.revature.util.StatusCodeConverter;
@@ -44,7 +45,7 @@ public class ReimbursementServiceTester {
     @BeforeClass
     public static void classSetup() {
         validUser = new User(1, "FullTester", "BetterPass", "Full",
-        "Tester", "Bigger@Gmail.com", 1, true);
+        "Tester", "Bigger@Gmail.com", Role.ADMIN, true);
         minimumReimbursement = new Reimbursement(3.50, "pizza party",
                                     validUser, ReimbursementStatus.PENDING, ReimbursementType.FOOD);
         fullReimbursement = new Reimbursement(1, 8.99, 
@@ -70,7 +71,7 @@ public class ReimbursementServiceTester {
     @Before
     public void testSetup() {
         validUser = new User(1, "FullTester", "BetterPass", "Full",
-        "Tester", "Bigger@Gmail.com", 1, true);
+        "Tester", "Bigger@Gmail.com", Role.ADMIN, true);
         minimumReimbursement = new Reimbursement(3.50, "pizza party",
                                     validUser, ReimbursementStatus.PENDING, ReimbursementType.FOOD);
         fullReimbursement = new Reimbursement(1, 8.99, 

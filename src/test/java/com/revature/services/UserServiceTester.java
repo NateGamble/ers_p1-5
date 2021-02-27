@@ -2,6 +2,7 @@ package com.revature.services;
 import com.revature.exceptions.InvalidColumnException;
 import com.revature.exceptions.InvalidCredentialsException;
 import com.revature.exceptions.PersistenceException;
+import com.revature.models.Role;
 import com.revature.models.User;
 import com.revature.repositories.UserRepository;
 import org.hibernate.boot.model.naming.IllegalIdentifierException;
@@ -23,7 +24,7 @@ public class UserServiceTester {
 
 
     static User fullTest = new User(1, "FullTester", "BetterPass", "Full",
-            "Tester", "Bigger@Gmail.com", 1, true);
+            "Tester", "Bigger@Gmail.com", Role.ADMIN, true);
     static User emptyTester = new User();
     static List<User> users;
     static User testUser;

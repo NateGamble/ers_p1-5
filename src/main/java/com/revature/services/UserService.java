@@ -95,7 +95,7 @@ public class UserService {
         }
 
         logger.info("User saved!");
-        newUser.setUserRole(Role.EMPLOYEE.ordinal() + 1);
+        newUser.setUserRole(Role.EMPLOYEE);
         setUserPassHash(newUser);
         userRepo.addUser(newUser);
     }
