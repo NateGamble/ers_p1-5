@@ -112,13 +112,16 @@ public class UserService {
             logger.error("Invalid user field values provided during registration!");
             throw new InvalidColumnException("Invalid user field values provided during registration!");
         }
-        if (userRepo.getAUserByUsername(newUser.getUsername()).orElseThrow(PersistenceException::new).getPassword()
-        == newUser.getPassword()){
+        User tempUser = userRepo.getAUserByUsername(newUser.getUsername()).orElseThrow(PersistenceException::new);
+        newUser.setUserId(tempUser.getUserId());
+        // If password hasn't changed (and doesn't need to be hashed)
+        if (tempUser.getPassword() == newUser.getPassword()){
             if (!userRepo.updateAUser(newUser)){
                 logger.error("There was a problem trying to update the user");
                 throw new PersistenceException("There was a problem trying to update the user");
             }
-        } else {
+        } // If new password (or unhashed password), hash password before updating
+        else {
             setUserPassHash(newUser);
             if (!userRepo.updateAUser(newUser)){
                 logger.error("There was a problem trying to update the user");

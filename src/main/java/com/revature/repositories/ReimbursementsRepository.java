@@ -143,8 +143,7 @@ public class ReimbursementsRepository {
         logger.info("Getting a Reimbursements by AuthorId from database: \n\t" + authorId);
 
         try {
-            String hql = "FROM Reimbursement r where r.authorId = :authorId";
-            // System.out.println("Reimbursement id passed in is: " + authorId);
+            String hql = "FROM Reimbursement r where r.author.userId = :authorId";
             reimbursements = session.createQuery(hql)
                             .setParameter("authorId", authorId)
                             .list();

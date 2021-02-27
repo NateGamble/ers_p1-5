@@ -243,7 +243,7 @@ public class ReimbursementServlet extends HttpServlet {
                 }
             } // Checks if rqstr is a Finance Manager, and whether or not they will be Approving/Denying.
             else if (rqstr != null && rqstr.getUserRole() == Role.FINANCE_MANAGER){
-                //
+                
                 if (reimbursementApprove != null){
                     logger.info("Approving Reimbursement");
                     int reimbId = Integer.parseInt(reimbursementIdParam);
