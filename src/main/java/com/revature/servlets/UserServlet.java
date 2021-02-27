@@ -252,7 +252,7 @@ public class UserServlet extends HttpServlet {
                 User user = mapper.readValue(req.getInputStream(), User.class);
                 logger.info("Updating user");
 
-                // writer.write(mapper.writeValueAsString(user));
+                writer.write(mapper.writeValueAsString(user));
 
                 userService.update(user);
                 String newUserJSON = mapper.writeValueAsString(user);
