@@ -56,7 +56,7 @@ public class UserServlet extends HttpServlet {
         String userIdParam = req.getParameter("userId");
 
         try{
-            if (rqstr != null && rqstr.getUserRole().equals(Role.ADMIN)){
+            if (rqstr != null && rqstr.getUserRole() == 1){
 
                 logger.info("UserServlet.doDelete() invoked by requester{}", rqstr);
                 int desiredId = Integer.parseInt(userIdParam);
@@ -116,7 +116,7 @@ public class UserServlet extends HttpServlet {
         String userIdParam = req.getParameter("userId");
 
         try{
-            if (rqstr != null && rqstr.getUserRole().equals(Role.ADMIN)){
+            if (rqstr != null && rqstr.getUserRole() == 1){
 
                 logger.info("UserServlet.doGet() invoked by requester{}", rqstr);
 
@@ -175,7 +175,7 @@ public class UserServlet extends HttpServlet {
         User rqstr = userService.getUserByUsername(p.getUsername());
 
         try{
-            if (rqstr != null && rqstr.getUserRole().equals(Role.ADMIN)){
+            if (rqstr != null && rqstr.getUserRole() == 1){
 
                 logger.info("UserServlet.doPost() invoked by requester{}", rqstr);
                 User user = mapper.readValue(req.getInputStream(), User.class);
@@ -196,20 +196,22 @@ public class UserServlet extends HttpServlet {
                             rqstr.getUsername());
                     resp.setStatus(403);
                     writer.write(errResponseFactory.generateErrorResponse(HttpStatus.FORBIDDEN).toJSON());
+                    writer.write("Request made by requester, " + rqstr.getUsername() + 
+                                    " who lacks proper authorities. They are a " + rqstr.getUserRole());
                 }
             }
         } catch (NumberFormatException e) {
-            e.printStackTrace();
+            e.printStackTrace(writer);
             logger.warn(e.getMessage());
             resp.setStatus(400);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.BAD_REQUEST).toJSON());
         } catch (ResourceNotFoundException e){
-            e.printStackTrace();
+            e.printStackTrace(writer);
             logger.warn(e.getMessage());
             resp.setStatus(404);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.NOT_FOUND).toJSON());
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(writer);
             logger.error(e.getMessage());
             resp.setStatus(500);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR).toJSON());
@@ -234,7 +236,7 @@ public class UserServlet extends HttpServlet {
         User rqstr = userService.getUserByUsername(p.getUsername());
 
         try{
-            if (rqstr != null && rqstr.getUserRole().equals(Role.ADMIN)){
+            if (rqstr != null && rqstr.getUserRole() == 1){
 
                 logger.info("UserServlet.doPut() invoked by requester{}", rqstr);
                 User user = mapper.readValue(req.getInputStream(), User.class);

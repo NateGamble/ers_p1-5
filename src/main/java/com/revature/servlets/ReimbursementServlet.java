@@ -61,7 +61,7 @@ public class ReimbursementServlet extends HttpServlet {
             //View All Reimbursements (Finance Manager OR Employee)
             if(reimbursementIdParam == null) {
                 //Finance Manager's options for viewing reimbursements
-                if (rqstr != null && rqstr.getUserRole().equals(Role.FINANCE_MANAGER)) {
+                if (rqstr != null && rqstr.getUserRole() == 2) {
                     //If a Reimbursement type is given, filters by Type.
                     if (reimbursementTypeParam != null) {
                         logger.info("ReimbursementServlet.doGet() invoked by requester{}", rqstr);
@@ -87,7 +87,7 @@ public class ReimbursementServlet extends HttpServlet {
                         writer.write(reimbursementsJson);
                     }
                 } //If Employee is the requester, they view all rather than filter.
-                else if (rqstr != null && rqstr.getUserRole().equals(Role.EMPLOYEE)) {
+                else if (rqstr != null && rqstr.getUserRole() == 3) {
                     logger.info("ReimbursementServlet.doGet() invoked by requester{}", rqstr);
                     logger.info("Retrieving all reimbursements");
                     int desiredId = Integer.parseInt(userIdParam);
@@ -109,8 +109,8 @@ public class ReimbursementServlet extends HttpServlet {
                 }
             } // Finance Manger OR Employee can get a specific Reimbursement by ID.
             else {
-                if (rqstr != null && rqstr.getUserRole().equals(Role.FINANCE_MANAGER) ||
-                        rqstr != null && rqstr.getUserRole().equals(Role.EMPLOYEE)) {
+                if (rqstr != null && rqstr.getUserRole() == 2 ||
+                        rqstr != null && rqstr.getUserRole() == 3) {
                     logger.info("ReimbursementServlet.doGet() invoked by requester{}", rqstr);
                     logger.info("Retrieving reimbursement by id{} ", reimbursementIdParam);
                     int desiredId = Integer.parseInt(reimbursementIdParam);
@@ -168,7 +168,7 @@ public class ReimbursementServlet extends HttpServlet {
 
         try{
             //Check that Employee is the requester attempting to submit a reimbursement.
-            if (rqstr != null && rqstr.getUserRole().equals(Role.EMPLOYEE)){
+            if (rqstr != null && rqstr.getUserRole() == 3){
 
                 logger.info("UserServlet.doPost() invoked by requester{}", rqstr);
                 Reimbursement reimbursement = mapper.readValue(req.getInputStream(), Reimbursement.class);
@@ -233,7 +233,7 @@ public class ReimbursementServlet extends HttpServlet {
 
         try{
             //Checks if rqstr is an Employee, and that they have a PENDING reimbursement.
-            if (rqstr != null && rqstr.getUserRole().equals(Role.EMPLOYEE)){
+            if (rqstr != null && rqstr.getUserRole() == 3){
                 logger.info("UserServlet.doPut() invoked by requester{}", rqstr);
                 Reimbursement newReimb = mapper.readValue(req.getInputStream(), Reimbursement.class);
                 Reimbursement reimb = reimbursementService.getReimbById(newReimb.getId());
@@ -247,7 +247,7 @@ public class ReimbursementServlet extends HttpServlet {
                     logger.info("Reimbursement not Pending, cannot update.");
                 }
             } // Checks if rqstr is a Finance Manager, and whether or not they will be Approving/Denying.
-            else if (rqstr != null && rqstr.getUserRole().equals(Role.FINANCE_MANAGER)){
+            else if (rqstr != null && rqstr.getUserRole() == 2){
                 //
                 if (reimbursementApprove != null){
                     logger.info("Approving Reimbursement");
