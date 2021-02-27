@@ -44,8 +44,8 @@ public class JwtGenerator {
                                 .setIssuer("revature")
                                 // Can add multiple claims
                                 .claim("firstName", subject.getFirstname())
-                                // 5 minute expiration
-                                .setExpiration(new Date(now + 300000))
+                                // 15 minute expiration
+                                .setExpiration(new Date(now + 900000))
                                 // key is like a salt, should be stored in .properties file
                                 .signWith(sigAlg, key);
 
