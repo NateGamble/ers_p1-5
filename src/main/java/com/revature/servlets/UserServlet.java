@@ -201,17 +201,17 @@ public class UserServlet extends HttpServlet {
                 }
             }
         } catch (NumberFormatException e) {
-            e.printStackTrace();
+            e.printStackTrace(writer);
             logger.warn(e.getMessage());
             resp.setStatus(400);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.BAD_REQUEST).toJSON());
         } catch (ResourceNotFoundException e){
-            e.printStackTrace();
+            e.printStackTrace(writer);
             logger.warn(e.getMessage());
             resp.setStatus(404);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.NOT_FOUND).toJSON());
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(writer);
             logger.error(e.getMessage());
             resp.setStatus(500);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR).toJSON());
