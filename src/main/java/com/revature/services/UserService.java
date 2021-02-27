@@ -110,7 +110,7 @@ public class UserService {
             logger.error("Invalid user field values provided during registration!");
             throw new InvalidColumnException("Invalid user field values provided during registration!");
         }
-        if (userRepo.getAUserById(newUser.getUserId()).orElseThrow(PersistenceException::new).getPassword()
+        if (userRepo.getAUserByUsername(newUser.getUsername()).orElseThrow(PersistenceException::new).getPassword()
         == newUser.getPassword()){
             if (!userRepo.updateAUser(newUser)){
                 logger.error("There was a problem trying to update the user");
