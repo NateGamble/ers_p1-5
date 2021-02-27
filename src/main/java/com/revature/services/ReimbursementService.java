@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.boot.model.naming.IllegalIdentifierException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -94,6 +95,9 @@ public class ReimbursementService {
      * @return A list of Reimbursement objects
      */
     public List<Reimbursement> getReimbByType(ReimbursementType type){
+        if (type == null) {
+            return null;
+        }
         logger.info("Getting reimbursements by type: " + type);
         List<Reimbursement> reimb = reimbRepo.getAllReimbSetByType(type);
         
@@ -122,6 +126,9 @@ public class ReimbursementService {
      * @return A list of Reimbursement objects
      */
     public List<Reimbursement> getReimbByStatus(ReimbursementStatus status){
+        if (status == null) {
+            return null;
+        }
         logger.info("Getting reimbursements by status: " + status);
         List<Reimbursement> reimb = reimbRepo.getAllReimbSetByStatus(status);
         
