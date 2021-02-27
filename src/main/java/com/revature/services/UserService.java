@@ -68,8 +68,7 @@ public class UserService {
         logger.info("Authentication successful!");
         User u = userRepo.getAUserByUsernameAndPassword(username,password).orElse(null);
         if (u == null) {
-            throw new AuthenticationException("Could not find user: " + username + " in database.\n" +
-            "password is: " + password);
+            throw new AuthenticationException("Could not find username/password combination in database.");
         }
         return u;
     }
