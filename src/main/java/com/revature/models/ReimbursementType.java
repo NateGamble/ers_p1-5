@@ -17,12 +17,12 @@ public enum ReimbursementType {
     public static ReimbursementType getByName(String name) {
 
         for (ReimbursementType role : ReimbursementType.values()) {
-            if (role.reimbursementType.equals(name)) {
+            if (role.reimbursementType.equalsIgnoreCase(name)) {
                 return role;
             }
         }
 
-        return OTHER;
+        return null;
 
     }
 

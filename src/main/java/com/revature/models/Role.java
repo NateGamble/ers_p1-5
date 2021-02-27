@@ -15,11 +15,11 @@ public enum Role {
     public static Role getByName(String name) {
 
         for (Role role : Role.values()) {
-            if (role.roleName.equals(name)) {
+            if (role.roleName.equalsIgnoreCase(name)) {
                 return role;
             }
         }
-        return EMPLOYEE;
+        return null;
     }
 
     @Override

@@ -18,18 +18,12 @@ public enum ReimbursementStatus {
     public static ReimbursementStatus getByName(String name) {
 
         for (ReimbursementStatus role : ReimbursementStatus.values()) {
-            if (role.reimbursementStatus.equals(name)) {
+            if (role.reimbursementStatus.equalsIgnoreCase(name)) {
                 return role;
             }
         }
 
-        return PENDING;
-
-        // functional implementation of the above code
-//        return Arrays.stream(Role.values())
-//                .filter(role -> role.roleName.equals(name))
-//                .findFirst()
-//                .orElse(LOCKED);
+        return null;
 
     }
 
