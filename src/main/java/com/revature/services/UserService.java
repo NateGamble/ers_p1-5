@@ -1,5 +1,6 @@
 package com.revature.services;
 
+import com.revature.exceptions.AuthenticationException;
 import com.revature.exceptions.InvalidColumnException;
 import com.revature.exceptions.InvalidCredentialsException;
 import com.revature.exceptions.PersistenceException;
@@ -67,7 +68,7 @@ public class UserService {
         logger.info("Authentication successful!");
         User u = userRepo.getAUserByUsernameAndPassword(username,password).orElse(null);
         if (u == null) {
-            throw new PersistenceException("Could not find user: " + username + " in database.\n" +
+            throw new AuthenticationException("Could not find user: " + username + " in database.\n" +
             "password is: " + password);
         }
         return u;
