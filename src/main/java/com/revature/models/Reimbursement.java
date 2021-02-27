@@ -1,6 +1,7 @@
 package com.revature.models;
 
 import org.hibernate.annotations.*;
+import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
 import javax.persistence.Entity;
@@ -45,6 +46,7 @@ public class Reimbursement {
 
     @ManyToOne(targetEntity = User.class, optional = false)
     @JoinColumn(name = "author_id", columnDefinition = "int4 NOT NULL")
+    // @Cascade(CascadeType.)
     private User author;
 
     @ManyToOne(targetEntity = User.class)
