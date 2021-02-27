@@ -65,7 +65,7 @@ public class UserServlet extends HttpServlet {
                 logger.info("Retrieving users with id, {}", desiredId);
                 boolean deleted = userService.deleteUserById(desiredId);
 
-                writer.write(mapper.writeValueAsString(deleted));
+                // writer.write(mapper.writeValueAsString(deleted));
 
                 String validationJson = mapper.writeValueAsString(deleted);
                 writer.write(validationJson);
@@ -187,7 +187,7 @@ public class UserServlet extends HttpServlet {
                 logger.info("UserServlet.doPost() invoked by requester{}", rqstr);
                 User user = mapper.readValue(req.getInputStream(), User.class);
 
-                writer.write(mapper.writeValueAsString(user));
+                // writer.write(mapper.writeValueAsString(user));
 
                 userService.register(user);
                 String newUserJSON = mapper.writeValueAsString(user);
@@ -252,7 +252,7 @@ public class UserServlet extends HttpServlet {
                 User user = mapper.readValue(req.getInputStream(), User.class);
                 logger.info("Updating user");
 
-                writer.write(mapper.writeValueAsString(user));
+                // writer.write(mapper.writeValueAsString(user));
 
                 userService.update(user);
                 String newUserJSON = mapper.writeValueAsString(user);

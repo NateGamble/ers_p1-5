@@ -8,17 +8,17 @@ public enum ReimbursementStatus {
     DENIED("Denied"),
     CLOSED("Closed");
 
-    private String reimbursementStaus;
+    private String reimbursementStatus;
 
     // enum constructors are implicitly private
     ReimbursementStatus(String name) {
-        this.reimbursementStaus = name;
+        this.reimbursementStatus = name;
     }
 
     public static ReimbursementStatus getByName(String name) {
 
         for (ReimbursementStatus role : ReimbursementStatus.values()) {
-            if (role.reimbursementStaus.equals(name)) {
+            if (role.reimbursementStatus.equals(name)) {
                 return role;
             }
         }
@@ -47,7 +47,15 @@ public enum ReimbursementStatus {
 
     @Override
     public String toString() {
-        return reimbursementStaus;
+        return reimbursementStatus;
+    }
+
+    public String getReimbursementStatus() {
+        return reimbursementStatus;
+    }
+
+    public void setReimbursementStatus(String reimbursementStatus) {
+        this.reimbursementStatus = reimbursementStatus;
     }
 
 
