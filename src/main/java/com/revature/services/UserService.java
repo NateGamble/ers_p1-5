@@ -143,6 +143,10 @@ public class UserService {
             logger.error("The provided ID cannot be less than or equal to 0.");
             throw new IllegalIdentifierException("The provided ID cannot be less than or equal to 0.");
         }
+        User u = userRepo.getAUserById(id).orElse(null);
+        if (u == null) {
+            throw new IllegalIdentifierException("A user with the provided ID value is not in the database");
+        }
 
         logger.info("Deletion successful!");
         return userRepo.deleteAUserById(id);

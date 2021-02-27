@@ -67,8 +67,10 @@ public class UserServlet extends HttpServlet {
 
                 // writer.write(mapper.writeValueAsString(deleted));
 
-                String validationJson = mapper.writeValueAsString(deleted);
-                writer.write(validationJson);
+                // String validationJson = mapper.writeValueAsString(deleted);
+                // writer.write(validationJson);
+                resp.setStatus(200);
+                writer.write(errResponseFactory.generateErrorResponse(HttpStatus.OK).toJSON());
 
             } else {
                 if (rqstr == null) {
