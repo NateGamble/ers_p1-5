@@ -240,6 +240,12 @@ public class ReimbursementServlet extends HttpServlet {
                     resp.setStatus(200);
                 } else{
                     logger.info("Reimbursement not Pending, cannot update.");
+                    resp.setStatus(403);
+                    writer.write(
+                        errResponseFactory.generateErrorResponse(
+                                            HttpStatus.FORBIDDEN.getStatus(),
+                                            "Current user is not allowed to update non-pending reimbursements")
+                        .toJSON());
                 }
             } // Checks if rqstr is a Finance Manager, and whether or not they will be Approving/Denying.
             else if (rqstr != null && rqstr.getUserRole() == Role.FINANCE_MANAGER){
