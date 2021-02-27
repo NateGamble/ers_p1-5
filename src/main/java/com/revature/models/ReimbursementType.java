@@ -45,4 +45,13 @@ public enum ReimbursementType {
         return reimbursementType;
     }
 
+    public String getReimbursementType() {
+        return reimbursementType;
+    }
+
+    public void setReimbursementType(String reimbursementType) {
+        this.reimbursementType = reimbursementType;
+    }
+    
+
 }

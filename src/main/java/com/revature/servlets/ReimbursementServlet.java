@@ -90,8 +90,13 @@ public class ReimbursementServlet extends HttpServlet {
                 else if (rqstr != null && rqstr.getUserRole() == 3) {
                     logger.info("ReimbursementServlet.doGet() invoked by requester{}", rqstr);
                     logger.info("Retrieving all reimbursements");
-                    int desiredId = Integer.parseInt(userIdParam);
-                    List<Reimbursement> reimbursements = reimbursementService.getReimbByUserId(desiredId);
+                    List<Reimbursement> reimbursements;
+                    if (userIdParam != null) {
+                        int desiredId = Integer.parseInt(userIdParam);
+                        reimbursements = reimbursementService.getReimbByUserId(desiredId);    
+                    } else {
+                        reimbursements = reimbursementService.getAllReimb();
+                    }
                     String reimbursementsJson = mapper.writeValueAsString(reimbursements);
                     writer.write(reimbursementsJson);
 
