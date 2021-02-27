@@ -63,16 +63,13 @@ public class ReimbursementsRepository {
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbursements() {
         List<Reimbursement> reimbursements = null;
-        Transaction tx = null;
         Session session = app.getFactory().openSession();
         logger.info("Getting all Reimbursements from database.");
 
         try {
-            tx = session.beginTransaction();
             reimbursements = session.createQuery("FROM Reimbursement").list();
 
         } catch (HibernateException e) {
-            if (tx!= null) tx.rollback();
             logger.error("Something with Hibernate went wrong");
             logger.error(e.getStackTrace());
         } finally {
@@ -85,12 +82,10 @@ public class ReimbursementsRepository {
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByStatus(ReimbursementStatus status) {
         List<Reimbursement> reimbursements = null;
-        Transaction tx = null;
         Session session = app.getFactory().openSession();
         logger.info("Getting all Reimbursements by Status from database: \n\t" + status.toString());
 
         try {
-            tx = session.beginTransaction();
             String hql = "FROM Reimbursement r where r.reimbursementStatus = :status";
             // System.out.println("Reimbursement status passed in is: " + status);
             reimbursements = session.createQuery(hql)
@@ -98,7 +93,6 @@ public class ReimbursementsRepository {
                                         .list();
 
         } catch (HibernateException e) {
-            if (tx!= null) tx.rollback();
             logger.error("Something with Hibernate went wrong");
             logger.error(e.getStackTrace());
         } finally {
@@ -118,11 +112,9 @@ public class ReimbursementsRepository {
         Optional<Reimbursement> reimbursement = Optional.empty();
         logger.info("Getting a Reimbursements by Id from database: \n\t" + reimbId);
 
-        Transaction tx = null;
         Session session = app.getFactory().openSession();
 
         try {
-            tx = session.beginTransaction();
             String hql = "FROM Reimbursement r where r.id = :id";
             reimbursement = session.createQuery(hql)
                             .setParameter("id", reimbId)
@@ -130,7 +122,6 @@ public class ReimbursementsRepository {
                             .findFirst();
 
         } catch (HibernateException e) {
-            if (tx!= null) tx.rollback();
             logger.error("Something with Hibernate went wrong");
             logger.error(e.getStackTrace());
         } finally {
@@ -148,12 +139,10 @@ public class ReimbursementsRepository {
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByAuthorId(Integer authorId) {
         List<Reimbursement> reimbursements = null;
-        Transaction tx = null;
         Session session = app.getFactory().openSession();
         logger.info("Getting a Reimbursements by AuthorId from database: \n\t" + authorId);
 
         try {
-            tx = session.beginTransaction();
             String hql = "FROM Reimbursement r where r.authorId = :authorId";
             // System.out.println("Reimbursement id passed in is: " + authorId);
             reimbursements = session.createQuery(hql)
@@ -161,7 +150,6 @@ public class ReimbursementsRepository {
                             .list();
 
         } catch (HibernateException e) {
-            if (tx!= null) tx.rollback();
             logger.error("Something with Hibernate went wrong");
             logger.error(e.getStackTrace());
         } finally {
@@ -180,13 +168,11 @@ public class ReimbursementsRepository {
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByAuthorIdAndStatus(Integer authorId, ReimbursementStatus reStat) {
         List<Reimbursement> reimbursements = null;
-        Transaction tx = null;
         Session session = app.getFactory().openSession();
         logger.info("Getting a Reimbursements by AuthorId and Status from database: \n\t"
                 + "AuthorId: " + authorId + " Reimb Status: " + reStat.toString());
 
         try {
-            tx = session.beginTransaction();
             String hql = "FROM Reimbursement r where r.authorId = :authorId"
                             + " and r.reimbursementStatus = :status";
             // System.out.println("Reimbursement id passed in is: " + authorId);
@@ -196,7 +182,6 @@ public class ReimbursementsRepository {
                             .list();
 
         } catch (HibernateException e) {
-            if (tx!= null) tx.rollback();
             logger.error("Something with Hibernate went wrong");
             logger.error(e.getStackTrace());
         } finally {
@@ -215,13 +200,11 @@ public class ReimbursementsRepository {
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByAuthorIdAndType(Integer authorId, ReimbursementType reType) throws SQLException {
         List<Reimbursement> reimbursements = null;
-        Transaction tx = null;
         Session session = app.getFactory().openSession();
         logger.info("Getting a Reimbursements by AuthorId and Type from database \n\t"
                 + "AuthorId: " + authorId + " Reimb Type: " + reType.toString());
 
         try {
-            tx = session.beginTransaction();
             String hql = "FROM Reimbursement r where r.authorId = :authorId"
                             + " and r.reimbursementType = :type";
             reimbursements = session.createQuery(hql)
@@ -230,7 +213,6 @@ public class ReimbursementsRepository {
                             .list();
 
         } catch (HibernateException e) {
-            if (tx!= null) tx.rollback();
             logger.error("Something with Hibernate went wrong");
             logger.error(e.getStackTrace());
         } finally {
@@ -243,19 +225,16 @@ public class ReimbursementsRepository {
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByType(ReimbursementType type)  {
         List<Reimbursement> reimbursements = null;
-        Transaction tx = null;
         Session session = app.getFactory().openSession();
         logger.info("Getting a Reimbursements by Type from database: \n\t" + type);
 
         try {
-            tx = session.beginTransaction();
             String hql = "FROM Reimbursement r where r.reimbursementType = :type";
             reimbursements = session.createQuery(hql)
                             .setParameter("type", type)
                             .list();
 
         } catch (HibernateException e) {
-            if (tx!= null) tx.rollback();
             logger.error("Something with Hibernate went wrong");
             logger.error(e.getStackTrace());
         } finally {
@@ -273,19 +252,16 @@ public class ReimbursementsRepository {
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByResolverId(Integer resolverId) {
         List<Reimbursement> reimbursements = null;
-        Transaction tx = null;
         Session session = app.getFactory().openSession();
         logger.info("Getting a Reimbursements by ResolverId from database: \n\t" + resolverId);
 
         try {
-            tx = session.beginTransaction();
             String hql = "FROM Reimbursement r where r.resolverId = :resolverId";
             reimbursements = session.createQuery(hql)
                             .setParameter("resolverId", resolverId)
                             .list();
 
         } catch (HibernateException e) {
-            if (tx!= null) tx.rollback();
             logger.error("Something with Hibernate went wrong");
             logger.error(e.getStackTrace());
         } finally {
@@ -304,13 +280,11 @@ public class ReimbursementsRepository {
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByResolverIdAndStatus(Integer resolverId, ReimbursementStatus reStat) {
         List<Reimbursement> reimbursements = null;
-        Transaction tx = null;
         Session session = app.getFactory().openSession();
         logger.info("Getting a Reimbursements by ResolverId and Status from database: \n\t" +
                 "ResolverId: " + resolverId + " Reimb Status: " + reStat);
 
         try {
-            tx = session.beginTransaction();
             String hql = "FROM Reimbursement r where r.resolverId = :resolverId"
                             + " and r.reimbursementStatus = :status";
             reimbursements = session.createQuery(hql)
@@ -319,7 +293,6 @@ public class ReimbursementsRepository {
                             .list();
 
         } catch (HibernateException e) {
-            if (tx!= null) tx.rollback();
             logger.error("Something with Hibernate went wrong");
             logger.error(e.getStackTrace());
         } finally {
@@ -338,13 +311,11 @@ public class ReimbursementsRepository {
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByResolverIdAndType(Integer resolverId, ReimbursementType reType) {
         List<Reimbursement> reimbursements = null;
-        Transaction tx = null;
         Session session = app.getFactory().openSession();
         logger.info("Getting a Reimbursements by ResolverId and Type from database: \n\t" +
                 "ResolverId: " + resolverId + " Type: " + reType);
 
         try {
-            tx = session.beginTransaction();
             String hql = "FROM Reimbursement r where r.resolverId = :resolverId"
                             + " and r.reimbursementType = :type";
             reimbursements = session.createQuery(hql)
@@ -353,7 +324,6 @@ public class ReimbursementsRepository {
                             .list();
 
         } catch (HibernateException e) {
-            if (tx!= null) tx.rollback();
             logger.error("Something with Hibernate went wrong");
             logger.error(e.getStackTrace());
         } finally {

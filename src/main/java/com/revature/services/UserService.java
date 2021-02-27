@@ -94,10 +94,12 @@ public class UserService {
             throw new InvalidCredentialsException("Email is already in use");
         }
 
-        logger.info("User saved!");
-        newUser.setUserRole(Role.EMPLOYEE);
+        if (newUser.getUserRole() == null) {
+            newUser.setUserRole(Role.EMPLOYEE);
+        }
         setUserPassHash(newUser);
         userRepo.addUser(newUser);
+        logger.info("User saved!");
     }
 
     /**

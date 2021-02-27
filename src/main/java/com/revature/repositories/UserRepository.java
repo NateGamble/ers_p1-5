@@ -61,14 +61,11 @@ public class UserRepository {
     public List<User> getAllusers() {
         logger.info("Retrieving all users from database");
         List<User> users = new ArrayList<>();
-        Transaction tx = null;
         Session session = app.getFactory().openSession();
 
         try {
-            tx = session.beginTransaction();
             users = session.createQuery("FROM User").list();
 
-            tx.commit();
             logger.info("Retrieved users successfully");
         } catch (HibernateException e) {
             logger.error("Something with Hibernate went wrong");
@@ -89,19 +86,15 @@ public class UserRepository {
     @SuppressWarnings("unchecked")
     public Optional<User> getAUserByEmail(String email) {
         logger.info("Retrieving user with email: " + email);
-        Transaction tx = null;
         Session session = app.getFactory().openSession();
         Optional<User> user = Optional.empty();
 
         try {
-            tx = session.beginTransaction();
             user = session.createQuery("FROM User u where u.email = :email")
                     .setParameter("email", email).stream().findFirst();
 
-            tx.commit();
             logger.info("Retrieved relevant users");
         } catch (HibernateException e) {
-            if (tx!= null) tx.rollback();
             logger.error("Something with Hibernate went wrong");
             logger.error(e.getStackTrace());
         } finally {
@@ -120,19 +113,15 @@ public class UserRepository {
     public Optional<User> getAUserByUsername(String userName) {
         logger.info("Retrieving user with username: " + userName);
         Optional<User> user = Optional.empty();
-        Transaction tx = null;
         Session session = app.getFactory().openSession();
 
         try {
-            tx = session.beginTransaction();
             user = session.createQuery("FROM User u where u.username = :username")
                     .setParameter("username", userName).stream().findFirst();
 
-            tx.commit();
             logger.info("Retrieved relevant users");
 
         } catch (HibernateException e) {
-            if (tx!= null) tx.rollback();
             logger.error("Something with Hibernate went wrong");
             logger.error(e.getStackTrace());
         } finally {
@@ -153,18 +142,14 @@ public class UserRepository {
         logger.info("Retrieving user with username: " + userName + 
                         " and password: ******");
         Optional<User> user = Optional.empty();
-        Transaction tx = null;
         Session session = app.getFactory().openSession();
 
         try {
-            tx = session.beginTransaction();
             user = session.createQuery("FROM User u where u.username = :username AND u.password = :password")
                     .setParameter("username", userName).setParameter("password", password).stream().findFirst();
 
-            tx.commit();
             logger.info("Retrieved relevant users");
         } catch (HibernateException e) {
-            if (tx!= null) tx.rollback();
             logger.error("Something with Hibernate went wrong");
             logger.error(e.getStackTrace());
         } finally {
@@ -183,18 +168,14 @@ public class UserRepository {
     public Optional<User> getAUserById(int id) {
         logger.info("Retrieving user with id: " + id);
         Optional<User> user = Optional.empty();
-        Transaction tx = null;
         Session session = app.getFactory().openSession();
 
         try {
-            tx = session.beginTransaction();
             user = session.createQuery("FROM User u where u.id = :id")
                     .setParameter("id", id).stream().findFirst();
 
-            tx.commit();
             logger.info("Retrieved relevant users");
         } catch (HibernateException e) {
-            if (tx!= null) tx.rollback();
             logger.error("Something with Hibernate went wrong");
             logger.error(e.getStackTrace());
         } finally {
