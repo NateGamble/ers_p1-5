@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Modified from Quizzard project at
+ * Created based on similar servlet from Quizzard project at
  * https://github.com/210119-java-enterprise/quizzard
  */
 @WebServlet("/reimbursements")
@@ -143,18 +143,15 @@ public class ReimbursementServlet extends HttpServlet {
                 }
             }
         } catch (NumberFormatException e) {
-            e.printStackTrace(writer);
-            logger.warn(e.getMessage());
+            logger.warn(e.getStackTrace());
             resp.setStatus(400);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.BAD_REQUEST).toJSON());
         } catch (ResourceNotFoundException e){
-            e.printStackTrace(writer);
-            logger.warn(e.getMessage());
+            logger.warn(e.getStackTrace());
             resp.setStatus(404);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.NOT_FOUND).toJSON());
         } catch (Exception e) {
-            e.printStackTrace(writer);
-            logger.error(e.getMessage());
+            logger.error(e.getStackTrace());
             resp.setStatus(500);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR).toJSON());
         }
@@ -202,20 +199,18 @@ public class ReimbursementServlet extends HttpServlet {
                 }
             }
         } catch (NumberFormatException e) {
-            e.printStackTrace(writer);
-            logger.warn(e.getMessage());
+            logger.warn(e.getStackTrace());
             resp.setStatus(400);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.BAD_REQUEST).toJSON());
         } catch (ResourceNotFoundException e){
-            e.printStackTrace(writer);
-            logger.warn(e.getMessage());
+            logger.warn(e.getStackTrace());
             resp.setStatus(404);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.NOT_FOUND).toJSON());
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getStackTrace());
             resp.setStatus(500);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR).toJSON());
-            e.printStackTrace(writer);
+            
         }
     }
 
@@ -297,21 +292,18 @@ public class ReimbursementServlet extends HttpServlet {
                 }
             }
         } catch (NumberFormatException e) {
-            e.printStackTrace(writer);
-            logger.warn(e.getMessage());
+            logger.warn(e.getStackTrace());
             resp.setStatus(400);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.BAD_REQUEST).toJSON());
         } catch (ResourceNotFoundException e){
-            e.printStackTrace(writer);
-            logger.warn(e.getMessage());
+            logger.warn(e.getStackTrace());
             resp.setStatus(404);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.NOT_FOUND).toJSON());
         } catch (Exception e) {
-            e.printStackTrace(writer);
-            logger.error(e.getMessage());
+            logger.error(e.getStackTrace());
             resp.setStatus(500);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR).toJSON());
-            e.printStackTrace(writer);
+            
         }
     }
 
