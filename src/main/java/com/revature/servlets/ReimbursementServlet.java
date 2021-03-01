@@ -3,6 +3,7 @@ package com.revature.servlets;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.dtos.HttpStatus;
 import com.revature.dtos.Principal;
+import com.revature.exceptions.EnumOutOfBoundsException;
 import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.models.*;
 import com.revature.repositories.UserRepository;
@@ -65,16 +66,29 @@ public class ReimbursementServlet extends HttpServlet {
                     if (reimbursementTypeParam != null) {
                         logger.info("ReimbursementServlet.doGet() invoked by requester{}", rqstr);
                         logger.info("Retrieving all reimbursements with Type{}" + reimbursementTypeParam);
-                        List<Reimbursement> reimbursements = reimbursementService
-                                .getReimbByType(ReimbursementType.getByName(reimbursementTypeParam));
+                        List<Reimbursement> reimbursements;
+                        try {
+                            reimbursements = reimbursementService
+                                    .getReimbByType(ReimbursementType.getByName(reimbursementTypeParam));
+                        } catch (EnumOutOfBoundsException e) {
+                            logger.info("Type enum provided was null");
+                            reimbursements = null;
+                        }
                         String reimbursementsJson = mapper.writeValueAsString(reimbursements);
                         writer.write(reimbursementsJson);
                     } //If a Reimbursement status is given, filters by Status.
                     else if (reimbursementStatusParam != null){
                         logger.info("ReimbursementServlet.doGet() invoked by requester{}", rqstr);
                         logger.info("Retrieving all reimbursements with Status{}" + reimbursementStatusParam);
-                        List<Reimbursement> reimbursements = reimbursementService
+                        List<Reimbursement> reimbursements;
+                        try {
+                            reimbursements = reimbursementService
                                 .getReimbByStatus(ReimbursementStatus.getByName(reimbursementStatusParam));
+                    
+                        } catch (EnumOutOfBoundsException e) {
+                            logger.info("Status enum provided was null");
+                            reimbursements = null;
+                        }
                         String reimbursementsJson = mapper.writeValueAsString(reimbursements);
                         writer.write(reimbursementsJson);
                     } //If neither is given, search all Reimbursements.

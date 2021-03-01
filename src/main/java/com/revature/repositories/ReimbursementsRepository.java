@@ -62,7 +62,7 @@ public class ReimbursementsRepository {
 
     /**
      * Retrives all {@code Reimbursement} records from the database
-     * @return a list of {@code Reimbursement}s. List will be empty if there are no
+     * @return a list of {@code Reimbursement} objects. List will be empty if there are no
      *      records in the database
      */
     @SuppressWarnings("unchecked")
@@ -88,7 +88,7 @@ public class ReimbursementsRepository {
      * Retrives all {@code Reimbursement} records from the database with the given
      * status.
      * @param status
-     * @return a list of {@code Reimbursement}s. List will be empty if there are no
+     * @return a list of {@code Reimbursement} objects. List will be empty if there are no
      *      records in the database
      */
     @SuppressWarnings("unchecked")
@@ -146,7 +146,7 @@ public class ReimbursementsRepository {
     /**
      * A method to get all of the records for an author given their id
      * @param authorId the ID of the author of the reimbursement
-     * @return a list of {@code Reimbursement}s. List will be empty if
+     * @return a list of {@code Reimbursement} objects. List will be empty if
      *      there are no records in the database with the given
      *      {@code authorId}
      */
@@ -176,7 +176,7 @@ public class ReimbursementsRepository {
      * A method to get all of the records for an author given their id and filter by status
      * @param authorId the ID of the author of the reimbursement
      * @param reStat the status that the reimbursement is to be set to
-     * @return a list of {@code Reimbursement}s. List will be empty if
+     * @return a list of {@code Reimbursement} objects. List will be empty if
      *      there are no records in the database with the given
      *      {@code authorId} and {@code reStat}
      */
@@ -209,7 +209,7 @@ public class ReimbursementsRepository {
      * A method to get all of the records for an author given their id and filter by type
      * @param authorId ID of the Author User
      * @param reType the Type to update the record to
-     * @return a list of {@code Reimbursement}s. List will be empty if
+     * @return a list of {@code Reimbursement} objects. List will be empty if
      *      there are no records in the database with the given
      *      {@code authorId} and {@code reType}
      */
@@ -242,7 +242,7 @@ public class ReimbursementsRepository {
      * A method to get all of the records for an author given their id and filter by type
      * @param authorId ID of the Author User
      * @param reType the Type to update the record to
-     * @return a list of {@code Reimbursement}s. List will be empty if
+     * @return a list of {@code Reimbursement} objects. List will be empty if
      *      there are no records in the database with the given {@code reType}
      */
     @SuppressWarnings("unchecked")
@@ -270,7 +270,7 @@ public class ReimbursementsRepository {
     /**
      * A method to get all of the records for a resolver given their id
      * @param resolverId ID of the Resolver User
-     * @return a list of {@code Reimbursement}s. List will be empty if
+     * @return a list of {@code Reimbursement} objects. List will be empty if
      *      there are no records in the database with the given {@code resolverId}
      */
     @SuppressWarnings("unchecked")
@@ -299,7 +299,7 @@ public class ReimbursementsRepository {
      * A method to get all of the records for a resolver given their id and filter by status
      * @param resolverId  ID of the Resolver User
      * @param reStat the status to update the record to
-     * @return a list of {@code Reimbursement}s. List will be empty if
+     * @return a list of {@code Reimbursement} objects. List will be empty if
      *      there are no records in the database with the given {@code resolverId}
      *      and {@code reStat}
      */
@@ -332,7 +332,7 @@ public class ReimbursementsRepository {
      * A  method to get all of the records for a resolver given their id and filter by type
      * @param resolverId ID of the Resolver User
      * @param reType type of Reimbursements to select by
-     * @return a list of {@code Reimbursement}s. List will be empty if
+     * @return a list of {@code Reimbursement} objects. List will be empty if
      *      there are no records in the database with the given {@code resolverId}
      *      and {@code reType}
      */
@@ -442,6 +442,7 @@ public class ReimbursementsRepository {
             tx = session.beginTransaction();
             reimbursement = (Reimbursement) session.get(Reimbursement.class, reimbId);
             reimbursement.setResolved(timestamp);
+            // Below is technically not needed, as hibernate has automatic dirty checking
             session.save(reimbursement);
             tx.commit();
             updated = true;

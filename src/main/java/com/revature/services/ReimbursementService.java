@@ -5,6 +5,7 @@ import com.revature.exceptions.AuthenticationException;
 import com.revature.exceptions.EnumOutOfBoundsException;
 import com.revature.exceptions.InvalidColumnException;
 import com.revature.exceptions.PersistenceException;
+import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.models.Reimbursement;
 import com.revature.models.ReimbursementStatus;
 import com.revature.models.ReimbursementType;
@@ -37,8 +38,8 @@ public class ReimbursementService {
     }
 
     /**
-     * Gets all Reimbursements from the DataBase
-     * @return A list of Reimbursement objects
+     * Gets all reimbursements from the DataBase
+     * @return A list of {@code Reimbursement} objects
      */
     public List<Reimbursement> getAllReimb(){
         logger.info("getting all reimbursements items from the database");
@@ -48,15 +49,15 @@ public class ReimbursementService {
     }
 
     /**
-     * Gets all reimbursements for a usre given their Id
-     * @param userId user id requested
-     * @return A list of Reimbursement objects
+     * Gets all reimbursements for a user given their id
+     * @param userId id of user
+     * @return A list of {@code Reimbursement} objects
      */
     public List<Reimbursement> getReimbByUserId(Integer userId){
         logger.info("Getting reimbursements by user id: " + userId);
         if (userId <= 0){
             logger.error("The provided user id can't be <= 0");
-            throw new IllegalIdentifierException("THE PROVIDED USER ID CANNOT BE LESS THAN OR EQUAL TO ZERO");
+            throw new IllegalIdentifierException("The provided user id cannot be less than or equal to 0. Id provided: " + userId);
         }
         List<Reimbursement> reimb = reimbRepo.getAllReimbSetByAuthorId(userId);
         return reimb;
@@ -65,7 +66,8 @@ public class ReimbursementService {
     /**
      * Gets all reimbursements by a specified type
      * @param typeId ordinal number of the type requested, between 1-4
-     * @return A list of Reimbursement objects
+     * @return A list of {@code Reimbursement} objects
+     * @throws EnumOutOfBoundsException if {@code typeId} is less than 1 or greater than 4
      */
     public List<Reimbursement> getReimbByType(Integer typeId){
         logger.info("Getting reimbursement by type: " + ReimbursementType.getByNumber(typeId));
@@ -80,25 +82,14 @@ public class ReimbursementService {
 
     /**
      * Gets all reimbursements by a specified type
-     * @param reimbId ordinal number of the type requested, between 1-4
-     * @return A list of Reimbursement objects
-     */
-    public Reimbursement getReimbById(Integer reimbId){
-        if (reimbId <= 0 ){
-            throw new IllegalIdentifierException("THE PROVIDED USER ID CANNOT BE LESS THAN ZERO");
-        }
-
-        return reimbRepo.getAReimbByReimbId(reimbId).orElseThrow(PersistenceException::new);
-    }
-
-    /**
-     * Gets all reimbursements by a specified type
-     * @param type ordinal number of the type requested, between 1-4
-     * @return A list of Reimbursement objects
+     * @param type a {@code ReimbursementType} to search for
+     * @return A list of {@code Reimbursement} objects
+     * @throws EnumOutOfBoundsException if {@code type} is {@code null}
      */
     public List<Reimbursement> getReimbByType(ReimbursementType type){
         if (type == null) {
-            return null;
+            logger.error("Provided enum is invalid");
+            throw new EnumOutOfBoundsException("The provided enum must not be null!");
         }
         logger.info("Getting reimbursements by type: " + type);
         List<Reimbursement> reimb = reimbRepo.getAllReimbSetByType(type);
@@ -107,9 +98,24 @@ public class ReimbursementService {
     }
 
     /**
+     * Gets all reimbursements by a specified id
+     * @param reimbId id for a specific Reimbursement
+     * @return A {@code Reimbursement} object
+     * @throws ResourceNotFoundException if there is no {@code Reimbursement} with the specified id 
+     */
+    public Reimbursement getReimbById(Integer reimbId){
+        if (reimbId <= 0 ){
+            throw new IllegalIdentifierException("The reimbursement id cannot be less than or equal to 0. Reimbursement id provided: " + reimbId);
+        }
+
+        return reimbRepo.getAReimbByReimbId(reimbId).orElseThrow(ResourceNotFoundException::new);
+    }
+
+    /**
      * Gets all reimbursements by a specified status
-     * @param statusId ordinal number of the type requested, between 1-3
-     * @return A list of Reimbursement objects
+     * @param statusId ordinal number of the type requested, between 1-4
+     * @return A list of {@code Reimbursement} objects
+     * @throws EnumOutOfBoundsException if {@code statusId} is less than 1 or greater than 4
      */
     public List<Reimbursement> getReimbByStatus(Integer statusId){
         logger.info("Getting reimbursements by status: " + ReimbursementStatus.getByNumber(statusId));
@@ -124,12 +130,13 @@ public class ReimbursementService {
 
     /**
      * Gets all reimbursements by a specified status
-     * @param statusId ordinal number of the type requested, between 1-3
-     * @return A list of Reimbursement objects
+     * @param status a {@code ReimbursementStatus} to search for
+     * @return A list of {@code Reimbursement} objects
+     * @throws EnumOutOfBoundsException if {@code status} is {@code null}
      */
     public List<Reimbursement> getReimbByStatus(ReimbursementStatus status){
         if (status == null) {
-            return null;
+            throw new EnumOutOfBoundsException("Status must not be null!");
         }
         logger.info("Getting reimbursements by status: " + status);
         List<Reimbursement> reimb = reimbRepo.getAllReimbSetByStatus(status);
@@ -139,7 +146,7 @@ public class ReimbursementService {
 
     /**
      * Saves a reimbursement after validation
-     * @param reimb the completed reimbursement object
+     * @param reimb the completed {@code Reimbursement} object
      */
     public void save(Reimbursement reimb){
         logger.info("Attempting to save reimbursement:\n\t" + reimb);
@@ -156,7 +163,7 @@ public class ReimbursementService {
 
     /**
      * Update a reimbursement
-     * @param reimb the completed reimbursement object
+     * @param reimb the updated {@code Reimbursement} object
      */
     public void updateEMP(Reimbursement reimb) {
         logger.info("Attempting to update reimbursement:\n\t" + reimb);
@@ -175,9 +182,11 @@ public class ReimbursementService {
     }
 
     /**
-     * Approve a Reimb.
-     * @param resolverId the Id of the fin manager resolving the reimb.
-     * @param reimbId id of the Reimb. to approve or disapprove.
+     * Approves a {@code Reimbursement} object
+     * @param resolverId the id of the fin manager resolving the reimbursement
+     * @param reimbId id of the reimbursement to approve
+     * @throws IllegalIdentifierException if the id for the reimbursement or resolver is less than 1
+     * @throws PersistenceException if something goes wrong with updating database
      */
     public void approve(Integer resolverId, Integer reimbId) {
         logger.info("Attempting to approve reimbursement with id: " + reimbId +
@@ -194,9 +203,11 @@ public class ReimbursementService {
     }
 
     /**
-     * Deny a reimb.
-     * @param resolverId the Id of the fin manager resolving the reimb.
-     * @param reimbId id of the Reimb. to approve or disapprove.
+     * Denies a {@code Reimbursement} object
+     * @param resolverId the id of the fin manager resolving the reimbursement
+     * @param reimbId id of the reimbursement to disapprove
+     * @throws IllegalIdentifierException if the id for the reimbursement or resolver is less than 1
+     * @throws PersistenceException if something goes wrong with updating database
      */
     public void deny(Integer resolverId, Integer reimbId) {
         logger.info("Attempting to deny reimbursement with id: " + reimbId +
@@ -213,9 +224,9 @@ public class ReimbursementService {
     }
 
     /**
-     * Validates feilds of a reimbursement
-     * @param reimb reimb. to be validated
-     * @return true or false based on fields
+     * Validates feilds of a {@code Reimbursement}
+     * @param reimb reimbursement to be validated
+     * @return {@code true} if the reimbursement is valid, {@code false} otherwise
      */
     public boolean isReimbursementValid(Reimbursement reimb){
         if (reimb == null) return false;
