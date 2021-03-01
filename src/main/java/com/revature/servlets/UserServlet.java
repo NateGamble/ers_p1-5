@@ -149,18 +149,15 @@ public class UserServlet extends HttpServlet {
                 }
             }
         } catch (NumberFormatException e) {
-            e.printStackTrace();
-            logger.warn(e.getMessage());
+            logger.warn(e.getStackTrace());
             resp.setStatus(400);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.BAD_REQUEST).toJSON());
         } catch (ResourceNotFoundException e){
-            e.printStackTrace();
-            logger.warn(e.getMessage());
+            logger.warn(e.getStackTrace());
             resp.setStatus(404);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.NOT_FOUND).toJSON());
         } catch (Exception e) {
-            e.printStackTrace();
-            logger.error(e.getMessage());
+            logger.error(e.getStackTrace());
             resp.setStatus(500);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR).toJSON());
         }

@@ -3,12 +3,16 @@ package com.revature.dtos;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.Objects;
 
 /**
  * Taken from Quizzard project at https://github.com/210119-java-enterprise/quizzard
  */
 public class ErrorResponse {
+    private static final Logger logger = LogManager.getLogger(ErrorResponse.class);
 
     private int status;
     private String message;
@@ -59,7 +63,7 @@ public class ErrorResponse {
         try {
             json = mapper.writeValueAsString(this);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            logger.error(e.getStackTrace());
         }
 
         return json;

@@ -7,11 +7,16 @@ import java.util.Properties;
 
 import com.revature.models.User;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 public class JwtGenerator {
+    private static final Logger logger = LogManager.getLogger(JwtGenerator.class);
+
     // Common security term for thing is subject
     public static String createJwt(User subject) {
         // Pick algorithm
@@ -32,7 +37,7 @@ public class JwtGenerator {
                 props.load(input);
                 key = props.getProperty("key");
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error(e.getStackTrace());
             }
         } else {
             key = System.getProperty("key");

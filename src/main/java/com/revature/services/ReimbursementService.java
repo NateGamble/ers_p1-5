@@ -11,14 +11,12 @@ import com.revature.models.ReimbursementStatus;
 import com.revature.models.ReimbursementType;
 import com.revature.models.User;
 import com.revature.repositories.ReimbursementsRepository;
-import com.revature.repositories.UserRepository;
 import com.revature.util.StatusCodeConverter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.boot.model.naming.IllegalIdentifierException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
