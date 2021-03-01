@@ -12,6 +12,13 @@ public enum Role {
         this.roleName = name;
     }
 
+    /**
+     * Retrieves a {@code Role} associated with a given string
+     * 
+     * @param name case insensitive name of a role type
+     * @return a {@code Role} enum associated with the given {@code name}
+     *      or {@code null} if there is no enum associated with the given name
+     */
     public static Role getByName(String name) {
 
         for (Role role : Role.values()) {
