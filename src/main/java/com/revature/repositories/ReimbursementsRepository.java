@@ -60,6 +60,11 @@ public class ReimbursementsRepository {
 
     //---------------------------------- READ -------------------------------------------- //
 
+    /**
+     * Retrives all {@code Reimbursement} records from the database
+     * @return a list of {@code Reimbursement}s. List will be empty if there are no
+     *      records in the database
+     */
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbursements() {
         List<Reimbursement> reimbursements = null;
@@ -79,6 +84,13 @@ public class ReimbursementsRepository {
         return reimbursements;
     }
 
+    /**
+     * Retrives all {@code Reimbursement} records from the database with the given
+     * status.
+     * @param status
+     * @return a list of {@code Reimbursement}s. List will be empty if there are no
+     *      records in the database
+     */
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByStatus(ReimbursementStatus status) {
         List<Reimbursement> reimbursements = null;
@@ -134,7 +146,9 @@ public class ReimbursementsRepository {
     /**
      * A method to get all of the records for an author given their id
      * @param authorId the ID of the author of the reimbursement
-     * @return a set of reimbursements
+     * @return a list of {@code Reimbursement}s. List will be empty if
+     *      there are no records in the database with the given
+     *      {@code authorId}
      */
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByAuthorId(Integer authorId) {
@@ -162,7 +176,9 @@ public class ReimbursementsRepository {
      * A method to get all of the records for an author given their id and filter by status
      * @param authorId the ID of the author of the reimbursement
      * @param reStat the status that the reimbursement is to be set to
-     * @return a set of reimbursements
+     * @return a list of {@code Reimbursement}s. List will be empty if
+     *      there are no records in the database with the given
+     *      {@code authorId} and {@code reStat}
      */
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByAuthorIdAndStatus(Integer authorId, ReimbursementStatus reStat) {
@@ -174,7 +190,6 @@ public class ReimbursementsRepository {
         try {
             String hql = "FROM Reimbursement r where r.authorId = :authorId"
                             + " and r.reimbursementStatus = :status";
-            // System.out.println("Reimbursement id passed in is: " + authorId);
             reimbursements = session.createQuery(hql)
                             .setParameter("authorId", authorId)
                             .setParameter("status", reStat)
@@ -194,7 +209,9 @@ public class ReimbursementsRepository {
      * A method to get all of the records for an author given their id and filter by type
      * @param authorId ID of the Author User
      * @param reType the Type to update the record to
-     * @return a set of reimbursements
+     * @return a list of {@code Reimbursement}s. List will be empty if
+     *      there are no records in the database with the given
+     *      {@code authorId} and {@code reType}
      */
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByAuthorIdAndType(Integer authorId, ReimbursementType reType) throws SQLException {
@@ -221,6 +238,13 @@ public class ReimbursementsRepository {
         return reimbursements;
     }
 
+    /**
+     * A method to get all of the records for an author given their id and filter by type
+     * @param authorId ID of the Author User
+     * @param reType the Type to update the record to
+     * @return a list of {@code Reimbursement}s. List will be empty if
+     *      there are no records in the database with the given {@code reType}
+     */
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByType(ReimbursementType type)  {
         List<Reimbursement> reimbursements = null;
@@ -246,7 +270,8 @@ public class ReimbursementsRepository {
     /**
      * A method to get all of the records for a resolver given their id
      * @param resolverId ID of the Resolver User
-     * @return a set of reimbursements
+     * @return a list of {@code Reimbursement}s. List will be empty if
+     *      there are no records in the database with the given {@code resolverId}
      */
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByResolverId(Integer resolverId) {
@@ -274,7 +299,9 @@ public class ReimbursementsRepository {
      * A method to get all of the records for a resolver given their id and filter by status
      * @param resolverId  ID of the Resolver User
      * @param reStat the status to update the record to
-     * @return a set of reimbursements
+     * @return a list of {@code Reimbursement}s. List will be empty if
+     *      there are no records in the database with the given {@code resolverId}
+     *      and {@code reStat}
      */
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByResolverIdAndStatus(Integer resolverId, ReimbursementStatus reStat) {
@@ -305,7 +332,9 @@ public class ReimbursementsRepository {
      * A  method to get all of the records for a resolver given their id and filter by type
      * @param resolverId ID of the Resolver User
      * @param reType type of Reimbursements to select by
-     * @return a set of reimbursements
+     * @return a list of {@code Reimbursement}s. List will be empty if
+     *      there are no records in the database with the given {@code resolverId}
+     *      and {@code reType}
      */
     @SuppressWarnings("unchecked")
     public List<Reimbursement> getAllReimbSetByResolverIdAndType(Integer resolverId, ReimbursementType reType) {
@@ -335,8 +364,8 @@ public class ReimbursementsRepository {
     //---------------------------------- UPDATE -------------------------------------------- //
     /**
      * 
-     * @param reimb
-     * @return
+     * @param reimb a {@code Reimbursement} to be updated in the database
+     * @return {@code true} if the update was successful, {@code false} otherwise
      */
     public boolean updateEMP(Reimbursement reimb) {
         boolean updated = false;
@@ -366,7 +395,7 @@ public class ReimbursementsRepository {
      * @param resolverId
      * @param statusId
      * @param reimbId
-     * @return {@code true} if the up {@code false} otherwise
+     * @return {@code true} if the update was successful, {@code false} otherwise
      */
     public boolean updateFIN(Integer resolverId, Integer statusId, Integer reimbId) {
         Reimbursement reimbursement = null;
@@ -399,7 +428,7 @@ public class ReimbursementsRepository {
      * A method to update only the resolved timestamp by the id of the reimbursement
      * @param reimbId The ID of the reimbursement in the database that is requested
      * @param timestamp an SQL timestamp object to set the time resolved to
-     * @return returns {@code true} if the up {@code false} otherwise
+     * @return {@code true} if the update was successful, {@code false} otherwise
      */
     public boolean updateResolvedTimeStampByReimbId(Integer reimbId, Timestamp timestamp) {
         Reimbursement reimbursement = null;
@@ -431,7 +460,7 @@ public class ReimbursementsRepository {
      * A method to update only the resolver ID by the id of the reimbursement
      * @param reimbId The ID of the reimbursement in the database that is requested
      * @param resolverId the ID of the user that resolves the record to update the record to
-     * @return returns {@code true} if the update was successful
+     * @return {@code true} if the update was successful, {@code false} otherwise
      */
     public boolean updateResolverIdByReimbId(Integer reimbId, Integer resolverId) {
         Reimbursement reimbursement = null;
@@ -463,7 +492,7 @@ public class ReimbursementsRepository {
      * A method to update only the Reimbursement TYPE by the id of the Reimbursement
      * @param reimbId The ID of the reimbursement in the database that is requested
      * @param reimbursementType the type to update the record to
-     * @return returns {@code true} if the up {@code false} otherwise
+     * @return {@code true} if the update was successful, {@code false} otherwise
      */
     public boolean updateReimbursementTypeByReimbId(Integer reimbId, ReimbursementType reimbursementType) {
         Reimbursement reimbursement = null;
@@ -495,7 +524,7 @@ public class ReimbursementsRepository {
      * A method to update the status of a reimbursement in the database
      * @param reimbId The ID of the reimbursement in the database that is requested
      * @param newReimbStatus the status to update the record to
-     * @return returns {@code true} if the up {@code false} otherwise
+     * @return {@code true} if the update was successful, {@code false} otherwise
      */
     public boolean updateReimbursementStatusByReimbId(Integer reimbId, ReimbursementStatus newReimbStatus) {
         Reimbursement reimbursement = null;
@@ -530,7 +559,7 @@ public class ReimbursementsRepository {
     /**
      * A method to delete a single Reimbursement from the database
      * @param reimbId the ID of the record to be deleted
-     * @return returns true if one and only one record is updated
+     * @return returns {@code true} if the deletion is successful, {@code false} otherwise
      */
     public boolean delete(Integer reimbId) {
         Transaction tx = null;
