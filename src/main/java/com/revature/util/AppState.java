@@ -6,7 +6,6 @@ import java.util.Properties;
 
 import com.revature.models.*;
 
-import com.revature.services.ReimbursementService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.SessionFactory;
@@ -17,7 +16,7 @@ import org.hibernate.service.ServiceRegistry;
 
 public class AppState {
 
-    private static final Logger logger = LogManager.getLogger(ReimbursementService.class);
+    private static final Logger logger = LogManager.getLogger(AppState.class);
 
     public static final AppState app = new AppState();
 
@@ -48,7 +47,7 @@ public class AppState {
                     settings.put(Environment.PASS, props.getProperty("password"));
                     settings.put(Environment.DIALECT, "org.hibernate.dialect.PostgresPlusDialect");
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.fatal(e.getStackTrace());
                 }
             }
             else {
@@ -72,8 +71,8 @@ public class AppState {
 
             factory = configuration.buildSessionFactory(serviceRegistry);
         } catch (Exception e) {
-            System.out.println("This ocurred because we set something up wrong");
-            e.printStackTrace();
+            logger.fatal("This ocurred because we set something up wrong");
+            logger.fatal(e.getStackTrace());
         }
     }
 

@@ -9,10 +9,17 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.revature.dtos.Principal;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 
+/**
+ * Parses a JWT to get information and store Principal in a HttpRequest
+ */
 public class JwtParser {
+    private static final Logger logger = LogManager.getLogger(JwtParser.class);
 
     public static void checkToken(HttpServletRequest req) {
         // get HTTP cookie named authorization
@@ -40,7 +47,7 @@ public class JwtParser {
                 props.load(input);
                 key = props.getProperty("key");
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error(e.getStackTrace());
             }
         } else {
             key = System.getProperty("key");
@@ -55,11 +62,10 @@ public class JwtParser {
             Principal principal = new Principal();
             principal.setId(Integer.parseInt(claims.getId()));  
             principal.setUsername(claims.getSubject());
-            // principal.setFirstName(claims.get("firstName", String.class));
 
             req.setAttribute("principal", principal);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getStackTrace());
         }
 
     }

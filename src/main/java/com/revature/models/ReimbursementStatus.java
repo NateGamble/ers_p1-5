@@ -15,6 +15,13 @@ public enum ReimbursementStatus {
         this.reimbursementStatus = name;
     }
 
+    /**
+     * Retrieves a {@code ReimbursementStatus} associated with a given string
+     * 
+     * @param name case insensitive name of a Reimbursement status
+     * @return a {@code ReimbursementStatus} enum associated with the given {@code name}
+     *      or {@code null} if there is no enum associated with the given name
+     */
     public static ReimbursementStatus getByName(String name) {
 
         for (ReimbursementStatus role : ReimbursementStatus.values()) {
@@ -27,6 +34,13 @@ public enum ReimbursementStatus {
 
     }
 
+    /**
+     * Retrieves a {@code ReimbursementStatus} associated with an int given.
+     * Expects numbers to be 1-based, not 0-based, with maximum of 4.
+     * @param number
+     * @return a {@code ReimbmursementStatus} based on the {@code number} given,
+     *      or {@code null} if there is no status associated with the number
+     */
     public static ReimbursementStatus getByNumber(Integer number){
         switch (number){
             case 1:
@@ -35,8 +49,11 @@ public enum ReimbursementStatus {
                 return APPROVED;
             case 3:
                 return DENIED;
+            case 4:
+                return CLOSED;
+            default:
+                return null;
         }
-        return CLOSED;
     }
 
     @Override
