@@ -14,6 +14,13 @@ public enum ReimbursementType {
         this.reimbursementType = name;
     }
 
+    /**
+     * Retrieves a {@code ReimbursementType} associated with a given string
+     * 
+     * @param name case insensitive name of a Reimbursement type
+     * @return a {@code ReimbursementType} enum associated with the given {@code name}
+     *      or {@code null} if there is no enum associated with the given name
+     */
     public static ReimbursementType getByName(String name) {
 
         for (ReimbursementType role : ReimbursementType.values()) {
@@ -26,6 +33,13 @@ public enum ReimbursementType {
 
     }
 
+    /**
+     * Retrieves a {@code ReimbursementStatus} associated with an int given.
+     * Expects numbers to be 1-based, not 0-based, with maximum of 4.
+     * @param number
+     * @return a {@code ReimbmursementStatus} based on the {@code number} given,
+     *      or {@code null} if there is no status associated with the number
+     */
     public static ReimbursementType getByNumber(Integer number){
         switch (number){
             case 1:
@@ -36,8 +50,9 @@ public enum ReimbursementType {
                 return FOOD;
             case 4:
                 return OTHER;
+            default:
+                return null;
         }
-        return OTHER;
     }
 
     @Override

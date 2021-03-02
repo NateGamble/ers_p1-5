@@ -10,7 +10,7 @@ import com.revature.util.UserRoleConverter;
 import java.util.Objects;
 
 /**
- * Base constructs for users, store only the integer representation of roles in the db for easier role checking
+ * Base constructs for users
  */
 @Entity
 @DynamicInsert

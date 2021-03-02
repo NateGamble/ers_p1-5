@@ -3,6 +3,7 @@ package com.revature.servlets;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.revature.dtos.HttpStatus;
 import com.revature.dtos.Principal;
+import com.revature.exceptions.EnumOutOfBoundsException;
 import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.models.*;
 import com.revature.repositories.UserRepository;
@@ -24,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Modified from Quizzard project at
+ * Created based on similar servlet from Quizzard project at
  * https://github.com/210119-java-enterprise/quizzard
  */
 @WebServlet("/reimbursements")
@@ -65,16 +66,29 @@ public class ReimbursementServlet extends HttpServlet {
                     if (reimbursementTypeParam != null) {
                         logger.info("ReimbursementServlet.doGet() invoked by requester{}", rqstr);
                         logger.info("Retrieving all reimbursements with Type{}" + reimbursementTypeParam);
-                        List<Reimbursement> reimbursements = reimbursementService
-                                .getReimbByType(ReimbursementType.getByName(reimbursementTypeParam));
+                        List<Reimbursement> reimbursements;
+                        try {
+                            reimbursements = reimbursementService
+                                    .getReimbByType(ReimbursementType.getByName(reimbursementTypeParam));
+                        } catch (EnumOutOfBoundsException e) {
+                            logger.info("Type enum provided was null");
+                            reimbursements = null;
+                        }
                         String reimbursementsJson = mapper.writeValueAsString(reimbursements);
                         writer.write(reimbursementsJson);
                     } //If a Reimbursement status is given, filters by Status.
                     else if (reimbursementStatusParam != null){
                         logger.info("ReimbursementServlet.doGet() invoked by requester{}", rqstr);
                         logger.info("Retrieving all reimbursements with Status{}" + reimbursementStatusParam);
-                        List<Reimbursement> reimbursements = reimbursementService
+                        List<Reimbursement> reimbursements;
+                        try {
+                            reimbursements = reimbursementService
                                 .getReimbByStatus(ReimbursementStatus.getByName(reimbursementStatusParam));
+                    
+                        } catch (EnumOutOfBoundsException e) {
+                            logger.info("Status enum provided was null");
+                            reimbursements = null;
+                        }
                         String reimbursementsJson = mapper.writeValueAsString(reimbursements);
                         writer.write(reimbursementsJson);
                     } //If neither is given, search all Reimbursements.
@@ -129,18 +143,15 @@ public class ReimbursementServlet extends HttpServlet {
                 }
             }
         } catch (NumberFormatException e) {
-            e.printStackTrace(writer);
-            logger.warn(e.getMessage());
+            logger.warn(e.getStackTrace());
             resp.setStatus(400);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.BAD_REQUEST).toJSON());
         } catch (ResourceNotFoundException e){
-            e.printStackTrace(writer);
-            logger.warn(e.getMessage());
+            logger.warn(e.getStackTrace());
             resp.setStatus(404);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.NOT_FOUND).toJSON());
         } catch (Exception e) {
-            e.printStackTrace(writer);
-            logger.error(e.getMessage());
+            logger.error(e.getStackTrace());
             resp.setStatus(500);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR).toJSON());
         }
@@ -188,20 +199,18 @@ public class ReimbursementServlet extends HttpServlet {
                 }
             }
         } catch (NumberFormatException e) {
-            e.printStackTrace(writer);
-            logger.warn(e.getMessage());
+            logger.warn(e.getStackTrace());
             resp.setStatus(400);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.BAD_REQUEST).toJSON());
         } catch (ResourceNotFoundException e){
-            e.printStackTrace(writer);
-            logger.warn(e.getMessage());
+            logger.warn(e.getStackTrace());
             resp.setStatus(404);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.NOT_FOUND).toJSON());
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getStackTrace());
             resp.setStatus(500);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR).toJSON());
-            e.printStackTrace(writer);
+            
         }
     }
 
@@ -283,21 +292,18 @@ public class ReimbursementServlet extends HttpServlet {
                 }
             }
         } catch (NumberFormatException e) {
-            e.printStackTrace(writer);
-            logger.warn(e.getMessage());
+            logger.warn(e.getStackTrace());
             resp.setStatus(400);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.BAD_REQUEST).toJSON());
         } catch (ResourceNotFoundException e){
-            e.printStackTrace(writer);
-            logger.warn(e.getMessage());
+            logger.warn(e.getStackTrace());
             resp.setStatus(404);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.NOT_FOUND).toJSON());
         } catch (Exception e) {
-            e.printStackTrace(writer);
-            logger.error(e.getMessage());
+            logger.error(e.getStackTrace());
             resp.setStatus(500);
             writer.write(errResponseFactory.generateErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR).toJSON());
-            e.printStackTrace(writer);
+            
         }
     }
 

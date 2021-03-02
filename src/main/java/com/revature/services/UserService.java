@@ -14,7 +14,6 @@ import org.hibernate.boot.model.naming.IllegalIdentifierException;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,8 +36,8 @@ public class UserService {
     }
 
     /**
-     * Gets all users from the DataBase
-     * @return A list of Users
+     * Gets all users from the database
+     * @return A list of {@code User} objects
      */
     public List<User> getAllUsers(){
         logger.info("Getting all User objects from database.");
@@ -46,7 +45,14 @@ public class UserService {
         return users;
     }
 
+    /**
+     * Gets a {@code User} with the specified username
+     * @param username
+     * @return the {@code User} associated with given {@code username} or {@code null}
+     *          if none exists
+     */
     public User getUserByUsername(String username) {
+        logger.info("Getting user with username " + username);
         User u = userRepo.getAUserByUsername(username).orElse(null);
         return u;
     }
@@ -55,33 +61,40 @@ public class UserService {
      * Authentication method used by the authentication servlet
      * @param username username of the user
      * @param password password of the user
-     * @return the object of the requested user
+     * @return the object of the requested {@code User}
+     * @throws InvalidCredentialsException if username or password are either
+     *      {@code null} or empty
+     * @throws AuthenticationException if a {@code User} with the provided username
+     *      and password does not exist
      */
     public User authenticate(String username, String password){
-        logger.info("Authenticating User in database.");
+        logger.info("Authenticating user in database with username: " + username);
         if (username == null || username.trim().equals("") || password == null || password.trim().equals("")){
             logger.error("Invalid credentials provided.");
             throw new InvalidCredentialsException("Invalid credentials provided");
         }
         password = passHash(password);
 
-        logger.info("Authentication successful!");
         User u = userRepo.getAUserByUsernameAndPassword(username,password).orElse(null);
         if (u == null) {
+            logger.info("Username or password provided were wrong");
             throw new AuthenticationException("Could not find username/password combination in database.");
         }
+        logger.info("Authentication successful!");
         return u;
     }
 
     /**
-     * Register a new user in the DB. validates all fields first
+     * Register a new user in the database. Validates the {@code User} object first
      * @param newUser completed user object
+     * @throws InvalidColumnException if {@code newUser} is not valid for persistence
+     * @throws InvalidCredentialsException if username or email is already in use
      */
     public void register(User newUser) {
         logger.info("Registering new user:\n\t " + newUser.toString());
         if (!isUserValid(newUser)) {
             logger.error("Invalid user field values provided during registration!");
-            throw new InvalidCredentialsException("Invalid user field values provided during registration!");
+            throw new InvalidColumnException("Invalid user field values provided during registration!");
         }
         Optional<User> existingUser = userRepo.getAUserByUsername(newUser.getUsername());
         if (existingUser.isPresent()) {
@@ -103,27 +116,29 @@ public class UserService {
     }
 
     /**
-     * Update a user in the DB.
-     * @param newUser user to update
+     * Update a user in the database.
+     * @param updatedUser user to update
+     * @throws InvalidColumnException if some value in {@code updatedUser} is invalid
+     * @throws PersistenceException if there's some issue updating the user in the database
      */
-    public void update(User newUser) {
-        logger.info("Updating user in database:\n\t" + newUser.toString());
-        if (!isUserValid(newUser)) {
+    public void update(User updatedUser) {
+        logger.info("Updating user in database:\n\t" + updatedUser.toString());
+        if (!isUserValid(updatedUser)) {
             logger.error("Invalid user field values provided during registration!");
             throw new InvalidColumnException("Invalid user field values provided during registration!");
         }
-        User tempUser = userRepo.getAUserByUsername(newUser.getUsername()).orElseThrow(PersistenceException::new);
-        newUser.setUserId(tempUser.getUserId());
+        User tempUser = userRepo.getAUserByUsername(updatedUser.getUsername()).orElseThrow(PersistenceException::new);
+        updatedUser.setUserId(tempUser.getUserId());
         // If password hasn't changed (and doesn't need to be hashed)
-        if (tempUser.getPassword() == newUser.getPassword()){
-            if (!userRepo.updateAUser(newUser)){
+        if (tempUser.getPassword() == updatedUser.getPassword()){
+            if (!userRepo.updateAUser(updatedUser)){
                 logger.error("There was a problem trying to update the user");
                 throw new PersistenceException("There was a problem trying to update the user");
             }
         } // If new password (or unhashed password), hash password before updating
         else {
-            setUserPassHash(newUser);
-            if (!userRepo.updateAUser(newUser)){
+            setUserPassHash(updatedUser);
+            if (!userRepo.updateAUser(updatedUser)){
                 logger.error("There was a problem trying to update the user");
                 throw new PersistenceException("There was a problem trying to update the user");
             }
@@ -133,9 +148,9 @@ public class UserService {
     }
 
     /**
-     * Deletes a user by changing their role to 4
+     * Deletes a user
      * @param id id of user to delete
-     * @return true if role was updated in db
+     * @return {@code true} if the user was deleted in the database
      */
     public boolean deleteUserById(int id) {
         logger.info("Deleting User object from database with id: " + id);
@@ -147,39 +162,41 @@ public class UserService {
         if (u == null) {
             throw new IllegalIdentifierException("A user with the provided ID value is not in the database");
         }
-
+        boolean deleted = userRepo.deleteAUserById(id);
+        if (!deleted) {
+            throw new PersistenceException("There was an error deleting the given user");
+        }
         logger.info("Deletion successful!");
-        return userRepo.deleteAUserById(id);
+        return deleted;
     }
 
     /**
-     * Method for simple checking of availability of username
-     * @param username username to chek
-     * @return true if available
+     * Method for simple checking of availability of a username
+     * @param username username to check
+     * @return {@code true} if available, {@code false} otherwise
      */
     public boolean isUsernameAvailable(String username) {
-        logger.info("Checking Username Availability in database.");
+        logger.info("Checking Username availability in database: " + username);
         User user = userRepo.getAUserByUsername(username).orElse(null);
         return user == null;
     }
 
     /**
-     * Method for simple checking of availability of email
+     * Method for simple checking of availability of an email
      * @param email
-     * @return true if available
+     * @return {@code true} if available, {@code false} otherwise
      */
     public boolean isEmailAvailable(String email) {
-        logger.info("Checking Username Availability in database.");
+        logger.info("Checking email availability in database: " + email);
         User user = userRepo.getAUserByEmail(email).orElse(null);
         return user == null;
     }
 
     /**
-     * Validates that the given user and its fields are valid (not null or empty strings). Does
-     * not perform validation on id or role fields.
-     *
+     * Validates that the given user and its fields are valid (not {@code null}
+     * or empty strings). Does not perform validation on id or role fields.
      * @param user
-     * @return true or false depending on if the user was valid or not
+     * @return {@code true} if the {@code user} was valid, {@code false} otherwise
      */
     public boolean isUserValid(User user) {
         if (user == null) return false;
@@ -191,9 +208,11 @@ public class UserService {
     }
 
     /**
-     * Method used to Hash passwords by taking in the User and accessing Password field.
+     * Method used to Hash passwords by taking in the {@code User} and accessing Password field.
+     * Sets the password field in {@code user} to the hash of the current password
      * Authored by Lokesh Gupta via HowToDoInJava:
      * https://howtodoinjava.com/java/java-security/how-to-generate-secure-password-hash-md5-sha-pbkdf2-bcrypt-examples/
+     * @param user
      */
     public void setUserPassHash(User user) {
         logger.info("Hashing password for given user: " + user.toString());
@@ -215,14 +234,17 @@ public class UserService {
             user.setPassword(sb.toString());
         } catch (NoSuchAlgorithmException e) {
             logger.error("Something went wrong with the password hashing algorithm.");
-            e.printStackTrace();
+            logger.error(e.getStackTrace());
         }
     }
 
     /**
-     * Method used to Hash passwords by taking in the Password and modifying.
+     * Method used to Hash passwords by taking in the password and modifying it.
      * Authored by Lokesh Gupta via HowToDoInJava:
      * https://howtodoinjava.com/java/java-security/how-to-generate-secure-password-hash-md5-sha-pbkdf2-bcrypt-examples/
+     * @param pass the password for a {@code User} object
+     * @return the hash of {@code pass} or {@code null} if the algorithm fails
+     *      due to being patched out
     */
     public String passHash(String pass) {
         logger.info("Hashing password for a given password.");

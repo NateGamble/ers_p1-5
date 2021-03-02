@@ -5,6 +5,10 @@ import javax.persistence.Converter;
 
 import com.revature.models.ReimbursementStatus;
 
+/**
+ * Converts a {@code ReimbursementStatus} to an int and back based on values used
+ * in the database
+ */
 @Converter
 public class StatusCodeConverter implements AttributeConverter<ReimbursementStatus, Integer> {
 

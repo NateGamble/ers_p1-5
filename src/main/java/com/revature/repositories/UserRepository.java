@@ -23,10 +23,9 @@ public class UserRepository {
     //---------------------------------- CREATE -------------------------------------------- //
 
     /**
-     * A method tho add a new user to the database, hashes passwords before inserting
+     * A method to add a new {@code User} to the database, hashes passwords before inserting
      * @param newUser the user to be added
-     * @return returns true if one and only one row was inserted
-     * @throws HibernateException e
+     * @return returns {@code true} if one and only one row was inserted, {@code false} otherwise
      */
     public boolean addUser(User newUser)  {
         logger.info("Adding new user: \n\t" + newUser);
@@ -36,6 +35,7 @@ public class UserRepository {
 
         try {
             tx = session.beginTransaction();
+            // stores the id generated for the new record
             valueCheck = (Integer) session.save(newUser);
             tx.commit();
             logger.info("User saved to database");
@@ -54,8 +54,8 @@ public class UserRepository {
 
     /**
      * A method to get a list of all Users in the database.
-     * @return return a list of User objects.
-     * @throws HibernateException e
+     * @return A list of {@code User} objects. Will return an empty list
+     *      if there are no records in table
      */
     @SuppressWarnings("unchecked")
     public List<User> getAllusers() {
@@ -78,10 +78,9 @@ public class UserRepository {
     }
 
     /**
-     * A method to get a single User by email
+     * A method to get a single {@code User} by email
      * @param email the email address to search the DB for
-     * @return returns an Optional user
-     * @throws HibernateException e
+     * @return returns an Optional {@code User}
      */
     @SuppressWarnings("unchecked")
     public Optional<User> getAUserByEmail(String email) {
@@ -105,9 +104,9 @@ public class UserRepository {
     }
 
     /**
-     * A method to get a single User by their unique Username.
+     * A method to get a single User by their unique username.
      * @param userName Username used to find user.
-     * @return Optional object which may or may not contain a User.
+     * @return {@code Optional} object of a {@code User}.
      */
     @SuppressWarnings("unchecked")
     public Optional<User> getAUserByUsername(String userName) {
@@ -134,8 +133,7 @@ public class UserRepository {
      * A method to get a single user by a given username and password
      * @param userName the users username
      * @param password the users password
-     * @return Optional object which may or may not contain a User.
-     * @throws
+     * @return {@code Optional} object of a {@code User}
      */
     @SuppressWarnings("unchecked")
     public Optional<User> getAUserByUsernameAndPassword(String userName, String password) {
@@ -161,8 +159,7 @@ public class UserRepository {
     /**
      * A method to get a single user by a given Id
      * @param id the user's id
-     * @return Optional object which may or may not contain a User.
-     * @throws
+     * @return {@code Optional} object of a {@code User}
      */
     @SuppressWarnings("unchecked")
     public Optional<User> getAUserById(int id) {
@@ -187,9 +184,9 @@ public class UserRepository {
     //---------------------------------- UPDATE -------------------------------------------- //
 
     /**
-     * A method to add a User to the database.
-     * @param newUser User with updated fields to be added.
-     * @return
+     * A method to update a user within the database.
+     * @param newUser {@code User} with updated fields to be added.
+     * @return {@code true} if the update was successful, {@code false} otherwise
      */
     public boolean updateAUser(User newUser) {
         logger.info("Updating user:\n\t" + newUser);
@@ -199,11 +196,10 @@ public class UserRepository {
 
         try {
             tx = session.beginTransaction();
-
             session.update(newUser);
+            tx.commit();
 
             updated = true;
-            tx.commit();
             logger.info("Updated user");
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();
@@ -218,10 +214,9 @@ public class UserRepository {
     //---------------------------------- DELETE -------------------------------------------- //
 
     /**
-     * A method to delete a single User from the database
+     * A method to delete a single record from the database
      * @param userId the ID of the record to be deleted
-     * @return returns true if one and only one record is updated
-     * @throws HibernateException e
+     * @return returns {@code true} if the delete was successful, {@code false} otherwise
      */
     public boolean deleteAUserById(Integer userId) {
         logger.info("Deleting user with id: " + userId);
@@ -231,12 +226,11 @@ public class UserRepository {
 
         try {
             tx = session.beginTransaction();
-
             User user = (User) session.get(User.class, userId);
             session.delete(user);
-
-            deleted = true;
             tx.commit();
+            
+            deleted = true;
             logger.info("User deleted");
         } catch (HibernateException e) {
             if (tx!= null) tx.rollback();

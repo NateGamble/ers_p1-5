@@ -7,11 +7,20 @@ import java.util.Properties;
 
 import com.revature.models.User;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
+/**
+ * Generates a JWT with 15 minute expiration for a given {@code User}
+ * JWT stores user id and username
+ */
 public class JwtGenerator {
+    private static final Logger logger = LogManager.getLogger(JwtGenerator.class);
+
     // Common security term for thing is subject
     public static String createJwt(User subject) {
         // Pick algorithm
@@ -32,7 +41,7 @@ public class JwtGenerator {
                 props.load(input);
                 key = props.getProperty("key");
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error(e.getStackTrace());
             }
         } else {
             key = System.getProperty("key");
@@ -42,8 +51,6 @@ public class JwtGenerator {
                                 .setId(Integer.toString(subject.getUserId()))
                                 .setSubject(subject.getUsername())
                                 .setIssuer("revature")
-                                // Can add multiple claims
-                                .claim("firstName", subject.getFirstname())
                                 // 15 minute expiration
                                 .setExpiration(new Date(now + 900000))
                                 // key is like a salt, should be stored in .properties file
