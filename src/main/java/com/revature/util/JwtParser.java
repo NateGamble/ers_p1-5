@@ -15,6 +15,9 @@ import org.apache.logging.log4j.Logger;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 
+/**
+ * Parses a JWT to get information and store Principal in a HttpRequest
+ */
 public class JwtParser {
     private static final Logger logger = LogManager.getLogger(JwtParser.class);
 
@@ -59,7 +62,6 @@ public class JwtParser {
             Principal principal = new Principal();
             principal.setId(Integer.parseInt(claims.getId()));  
             principal.setUsername(claims.getSubject());
-            // principal.setFirstName(claims.get("firstName", String.class));
 
             req.setAttribute("principal", principal);
         } catch (Exception e) {

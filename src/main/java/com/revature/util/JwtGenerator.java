@@ -14,6 +14,10 @@ import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
+/**
+ * Generates a JWT with 15 minute expiration for a given {@code User}
+ * JWT stores user id and username
+ */
 public class JwtGenerator {
     private static final Logger logger = LogManager.getLogger(JwtGenerator.class);
 
@@ -47,8 +51,6 @@ public class JwtGenerator {
                                 .setId(Integer.toString(subject.getUserId()))
                                 .setSubject(subject.getUsername())
                                 .setIssuer("revature")
-                                // Can add multiple claims
-                                .claim("firstName", subject.getFirstname())
                                 // 15 minute expiration
                                 .setExpiration(new Date(now + 900000))
                                 // key is like a salt, should be stored in .properties file
