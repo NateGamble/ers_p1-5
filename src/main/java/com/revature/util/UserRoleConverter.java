@@ -5,6 +5,10 @@ import javax.persistence.Converter;
 
 import com.revature.models.Role;
 
+/**
+ * Converts a {@code Role} to an int and back based on values used
+ * in the database
+ */
 @Converter
 public class UserRoleConverter implements AttributeConverter<Role, Integer> {
     @Override
